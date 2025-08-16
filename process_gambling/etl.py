@@ -1,6 +1,6 @@
 from process_gambling._etl import Etl
 
 
-def etl():
+def run():
     api = Etl()
 
