@@ -1,41 +1,9 @@
 import pandas as pd
+from tqdm import tqdm
+from process_gambling.etl.params import Params
 
 
-class Extract(object):
-    PRO_FOOTBALL_REFERENCE_TEAM_CODES = [
-        'phi',
-        'nyg',
-        'was',
-        'dal',
-        'rai',
-        'kan',
-        'sdg',
-        'den',
-        'cle',
-        'rav',
-        'pit',
-        'cin',
-        'buf',
-        'mia',
-        'nwe',
-        'nyj',
-        'htx',
-        'jax',
-        'oti',
-        'clt',
-        'gnb',
-        'chi',
-        'min',
-        'det',
-        'nor',
-        'tam',
-        'car',
-        'atl',
-        'sea',
-        'ram',
-        'crd',
-        'sfo'
-    ]
+class Extract(Params):
 
     def _download_historical_nfl(self) -> pd.DataFrame:
         df = []
