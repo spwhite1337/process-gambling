@@ -1,6 +1,6 @@
 import pandas as pd
 from tqdm import tqdm
-from process_gambling.etl.params import Params
+from process_gambling._etl.params import Params
 
 
 class Extract(Params):
