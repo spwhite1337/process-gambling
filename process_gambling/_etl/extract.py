@@ -38,24 +38,7 @@ class Extract(ExtractionHelpersSportsRef):
             df = pd.DataFrame()
         return df
 
-    def _get_event_starts(self) -> List[str]:
-        # Get event-starts for parameters in the ODDS_API
-        if self.sport == 'americanfootball_nfl':
-            conn = self.connect_to_db()
-            df = pd.read_sql(f"""
-                SELECT DISTINCT kickoff_datetime
-                FROM BRONZE_SPORTSREF_BOXSCORES_{self.sport}
-                -- Historical ODDS_API data starts at June 6, 2020
-                WHERE kickoff_datetime > DATE('2020-06-06')
-                ORDER BY kickoff_datetime
-                """, conn)
-            self.close_db(conn)
-            event_starts = df['kickoff_datetime'].to_list()
-        return event_starts
-
-    def extract_events(self) -> List[str]:
-        # Get date-strings of each event-start-time
-        event_starts = self._get_event_starts()
+    def extract_events(self, event_starts: List[str]) -> List[str]:
         # Pull all events at the listed kickoff-dates
         df = []
         for event_start in event_starts:

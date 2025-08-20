@@ -1,3 +1,4 @@
+from typing import List
 import boto3
 import sqlite3
 import pandas as pd
@@ -17,6 +18,23 @@ class Load(Extract):
         df = pd.read_sql(f'SELECT * FROM {table_name}', conn)
         self.close_db(conn)
         return df
+
+    def download_event_starts(self) -> List[str]:
+        # Get event-starts for parameters in the ODDS_API
+        if self.sport == 'americanfootball_nfl':
+            conn = self.connect_to_db()
+            df = pd.read_sql(f"""
+                SELECT DISTINCT kickoff_datetime
+                FROM BRONZE_SPORTSREF_BOXSCORES_{self.sport}
+                -- Historical ODDS_API data starts at June 6, 2020
+                WHERE kickoff_datetime > DATE('2020-06-06')
+                ORDER BY kickoff_datetime
+                """, conn)
+            self.close_db(conn)
+            event_starts = df['kickoff_datetime'].to_list()
+        else:
+            event_starts = []
+        return event_starts
 
     def sync_from_s3(self):
         pass
