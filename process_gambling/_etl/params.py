@@ -1,6 +1,9 @@
+import os
+import sqlite3
 
 
 class Params(object):
+    ODDS_API_KEY = os.environ.get('ODDS_API_KEY')
     VALID_SPORTS = [
         'americanfootball_nfl'
     ]
@@ -41,4 +44,19 @@ class Params(object):
             {'sports_odds_name': 'Washington Commanders', 'sports_ref_name': 'was', 'alt_name_1': 'Washington Redskins', 'alt_name_2': 'Washington Football Team'},
         ]
     }
+
+    def __init__(self, sport: Optional[str] = None):
+        if sport is not None:
+            assert sport in self.VALID_SPORTS
+        self.sport = sport
+        if not self.ODDS_API_KEY:
+            print('WARNING: No ODDS-API Key')
+
+    def connect_to_db(self):
+        conn = sqlite3.connect('data/process_gambling.db')
+        return conn
+
+    @staticmethod
+    def close_db(conn):
+        conn.close()
 

@@ -10,16 +10,7 @@ from process_gambling._etl.params import Params
 
 class Extract(Params):
     ODDS_API = 'https://api.the-odds-api.com/v4
-    ODDS_API_KEY = os.environ.get('ODDS_API_KEY')
     SPORTS_REF_API = 'https://www.pro-football-reference.com/'
-
-
-    def __init__(self, sport: Optional[str]):
-        if sport is not None:
-            assert sport in self.VALID_SPORTS
-        self.sport = sport
-        if not self.ODDS_API_KEY:
-            print('WARNING: No ODDS-API Key')
 
     def download_sports(self) -> pd.DataFrame:
         endpoint = '/sports'
@@ -46,18 +37,73 @@ class Extract(Params):
             df = pd.DataFrame()
         return df
 
+    def _get_event_starts(self) -> List[str]:
+        # Get event-starts for parameters in the ODDS_API
+        if self.sport == 'americanfootball_nfl':
+            conn = self.connect_to_db()
+            df = pd.read_sql(f"""
+                SELECT DISTINCT kickoff_datetime
+                FROM BRONZE_SPORTSREF_BOXSCORES_{self.sport}
+                -- Historical ODDS_API data starts at June 6, 2020
+                WHERE kickoff_datetime > DATE('2020-06-06')
+                ORDER BY kickoff_datetime
+                """, conn)
+            self.close_db(conn)
+            event_starts = df['kickoff_datetime'].to_list()
+        return event_starts
 
     def download_events(self) -> List[str]:
-        conn = 
-        df_dates = pd.read_sql(f"""
-            SELECT DISTINCT kickoff_datetime 
-            FROM BRONZE_SPORTSREF_BOXSCORES_{SPORT}
-            -- Historical ODDS_API data starts at June 6, 2020
-            WHERE kickoff_datetime > DATE('2020-06-06')
-            ORDER BY kickoff_datetime
-            """, conn)
-        conn.close()
-        kickoff_dates = df_dates['kickoff_datetime'].to_list()
+        # Get date-strings of each event-start-time
+        event_starts = self._get_event_starts()
+
+        # Pull all events at the listed kickoff-dates
+        df = []
+        for event_start in event_starts:
+            date = 'T'.join(event_start.split(' ')) + 'Z'
+            # Start with a 10-minute window around the kickoff time from scores data
+            commenceTimeFrom = 'T'.join(str(datetime.datetime.strptime(event_start, '%Y-%m-%d %H:%M:%S') - datetime.timedelta(minutes=10)).split(' ')) + 'Z'
+            commenceTimeTo = 'T'.join(str(datetime.datetime.strptime(event_start, '%Y-%m-%d %H:%M:%S') + datetime.timedelta(minutes=10)).split(' ')) + 'Z'
+            endpoint = f'/historical/sports/{self.sport}/events
+            r = requests.get(
+                self.ODDS_API + endpoint,
+                params={
+                    'apiKey': self.ODDS_API_KEY,
+                    'date': date,
+                    'commenceTimeFrom': commenceTimeFrom,
+                    'commenceTimeTo': commenceTimeTo
+                }
+            )
+            # If it returns nothing, expand the window to 100 minutes
+            if len(r.json()['data']) == 0:
+                commenceTimeFrom = 'T'.join(str(datetime.datetime.strptime(event_start, '%Y-%m-%d %H:%M:%S') - datetime.timedelta(minutes=100)).split(' ')) + 'Z'
+                commenceTimeTo = 'T'.join(str(datetime.datetime.strptime(event_start, '%Y-%m-%d %H:%M:%S') + datetime.timedelta(minutes=100)).split(' ')) + 'Z'
+                r = requests.get(
+                    self.ODDS_API + endpoint,
+                    params={
+                        'apiKey': self.ODDS_API_KEY,
+                        'date': date,
+                        'commenceTimeFrom': commenceTimeFrom,
+                        'commenceTimeTo': commenceTimeTo
+                    }
+                )
+            df_ = pd.DataFrame.from_records(r.json()['data']).assign(
+                input_date=r.json()['timestamp'],
+                previous_timestamp=r.json()['previous_timestamp'],
+                next_timestamp=r.json()['next_timestamp'],
+                event_start=event_start,
+                query_date=date,
+                query_commencetimefrom=commenceTimeFrom,
+                query_commencetimeto=commenceTimeTo,
+                url=url
+            )
+            df.append(df_)
+            # Sleep to take it easy on the API
+            time.sleep(0.1)
+        df = pd.concat(df)
+        # De-dupe
+        df['filter'] = df.groupby('id')['query_date'].transform('max')
+        df = df[df['filter'] == df['query_date']].drop('filter', axis=1)
+        return df
 
     def _parse_sports_ref(self, df: pd.DataFrame) -> pd.DataFrame:
         if self.sport == 'americanfootball_nfl':
@@ -65,7 +111,7 @@ class Extract(Params):
             df = df[
                 (df['Unnamed: 93_level_0'] != 'Team Totals')
                 &
-                (df['Defense'] != 'Unnamed: 3_level_1') 
+                (df['Defense'] != 'Unnamed: 3_level_1')
                 &
                 (df['Unnamed: 0_level_0'] != 'Team Totals')
                 &
@@ -77,9 +123,9 @@ class Extract(Params):
             df = df.dropna(axis=1, how='all')
             # Rename columns
             df.columns = [
-                'kickoff_time', 
-                'data_set', 
-                'kickoff_date', 
+                'kickoff_time',
+                'data_set',
+                'kickoff_date',
                 'kickoff_day_of_week',
                 'week_no',
                 'team_score',
@@ -128,7 +174,7 @@ class Extract(Params):
                     replace(tzinfo=None)
             df['kickoff_datetime'] = df['kickoff_datetime'].apply(parse_datetime)
             df['kickoff_timezone'] = 'UTC'
-        
+
         return df
 
     def _download_historical_sports_ref(self) -> pd.DataFrame:
