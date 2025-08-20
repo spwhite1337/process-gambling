@@ -21,27 +21,17 @@ class ExtractionHelpersSportsRef(Params):
     # Sports-Reference
     def _parse_sports_ref(self, df: pd.DataFrame) -> pd.DataFrame:
         if self.sport == 'americanfootball_nfl':
-            # Drop non-box score rows
-            df = df[
-                (df['Unnamed: 93_level_0'] != 'Team Totals')
-                &
-                (df['Defense'] != 'Unnamed: 3_level_1')
-                &
-                (df['Unnamed: 0_level_0'] != 'Team Totals')
-                &
-                (df['Unnamed: 9_level_0'] != 'Bye Week')
-                &
-                (df['Offense'] != 'Playoffs')
-            ]
-            # Drop columns that are all nan
-            df = df.dropna(axis=1, how='all')
-            # Rename columns
             df.columns = [
+                'week_no',
+                'kickoff_day_of_week',
+                'kickoff_date',
                 'kickoff_time',
                 'data_set',
-                'kickoff_date',
-                'kickoff_day_of_week',
-                'week_no',
+                'w_or_l',
+                'overtime',
+                'win_loss_record',
+                'is_home_team',
+                'opponent',
                 'team_score',
                 'opponent_score',
                 'team_first_downs',
@@ -57,24 +47,24 @@ class ExtractionHelpersSportsRef(Params):
                 'expected_points_offense',
                 'expected_points_defense',
                 'expected_points_special_teams',
-                'w_or_l',
-                'overtime',
-                'win_loss_record',
-                'is_home_team',
-                'opponent',
-                'team',
                 'season',
+                'team',
             ]
             # Convert to boolean
             df['is_home_team'] = df['is_home_team'].isna()
-            df['overtime'] = df['overtime'].isna()
+            df['overtime'] = ~df['overtime'].isna()
+            # Drop non-game rows
+            df = df[(df['opponent'] != 'Bye Week') & (df['kickoff_date'] != 'Playoffs')].copy()
+
             def gen_kickoff_datetime(r):
                 if 'January' in r['kickoff_date'] or 'February' in r['kickoff_date']:
                     season = int(r['season']) + 1
                 else:
                     season = int(r['season'])
                 return r['kickoff_date'] + ', ' + str(season) + ' ' + r['kickoff_time']
+
             df['kickoff_datetime'] = df.apply(gen_kickoff_datetime, axis=1)
+
             def parse_datetime(date_str: str) -> datetime:
                 # Remove the timezone abbreviation
                 cleaned = date_str.replace("ET", "").strip()
@@ -85,9 +75,9 @@ class ExtractionHelpersSportsRef(Params):
                             localize(dt).\
                             astimezone(pytz.timezone("UTC")).\
                             replace(tzinfo=None)
+
             df['kickoff_datetime'] = df['kickoff_datetime'].apply(parse_datetime)
             df['kickoff_timezone'] = 'UTC'
-
             return df
 
     def _download_historical_sports_ref(self) -> pd.DataFrame:
