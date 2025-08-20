@@ -6,6 +6,7 @@ import pandas as pd
 from tqdm import tqdm
 
 from process_gambling._etl.params import Params
+from process_gambling.config import logger
 
 
 class ExtractionHelpersSportsRef(Params):
@@ -92,7 +93,7 @@ class ExtractionHelpersSportsRef(Params):
     def _download_historical_sports_ref(self) -> pd.DataFrame:
         teams = [t['sports_ref_name'] for t in self.PARTICIPANTS_LOOKUP[self.sport]]
         df = []
-        print(f'Downloading Historical Box Scores for {self.sport}')
+        logger.info(f'Downloading Historical Box Scores for {self.sport}')
         for team in tqdm(teams):
             for year in range(self.START_YEAR[self.sport], datetime.datetime.now().year):
                 url = self.SPORTS_REF_API[self.sport]

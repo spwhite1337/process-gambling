@@ -44,6 +44,7 @@ class Extract(ExtractionHelpersSportsRef, ExtractionHelpersOddsApi):
         return pd.DataFrame.from_records(r.json()).assign(sport=self.sport)
 
     def generate_participants_lookup(self) -> pd.DataFrame:
+        logger.info(f'Generating Participant Lookup for {self.sport}')
         if self.sport in self.PARTICIPANTS_LOOKUP.keys():
             return pd.DataFrame.from_records(self.PARTICIPANTS_LOOKUP[self.sport])
         else:

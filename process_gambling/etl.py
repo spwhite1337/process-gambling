@@ -7,11 +7,11 @@ def run(sport: str):
     # df = api.extract_sports()
     # api.upload(df, f'BRONZE_ODDSAPI_SPORTS')
 
-    df = api.extract_participants()
-    api.upload(df, f'BRONZE_ODDSAPI_PARTICIPANTS_{api.sport}')
+    # df = api.extract_participants()
+    # api.upload(df, f'BRONZE_ODDSAPI_PARTICIPANTS_{api.sport}')
 
-    df = api.generate_participants_lookup()
-    api.upload(df, f'SILVER_TEAM_LOOKUPS_{api.sport}')
+    # df = api.generate_participants_lookup()
+    # api.upload(df, f'SILVER_TEAM_LOOKUPS_{api.sport}')
 
     df = api.extract_scores()
     api.upload(df, f'BRONZE_SCORES_{api.SCORES_DATA_SOURCE}_{api.sport}')
