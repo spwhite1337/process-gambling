@@ -2,6 +2,7 @@ from typing import Dict, List, Union
 import pytz
 import datetime
 import pandas as pd
+from tqdm import tqdm
 
 from process_gambling._etl.params import Params
 
