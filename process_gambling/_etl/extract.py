@@ -61,7 +61,7 @@ class Extract(ExtractionHelpersSportsRef):
             # Start with a 10-minute window around the kickoff time from scores data
             commenceTimeFrom = 'T'.join(str(datetime.datetime.strptime(event_start, '%Y-%m-%d %H:%M:%S') - datetime.timedelta(minutes=10)).split(' ')) + 'Z'
             commenceTimeTo = 'T'.join(str(datetime.datetime.strptime(event_start, '%Y-%m-%d %H:%M:%S') + datetime.timedelta(minutes=10)).split(' ')) + 'Z'
-            endpoint = f'/historical/sports/{self.sport}/events
+            endpoint = f'/historical/sports/{self.sport}/events'
             r = requests.get(
                 self.ODDS_API + endpoint,
                 params={
