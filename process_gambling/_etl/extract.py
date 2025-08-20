@@ -176,12 +176,16 @@ class Extract(ExtractionHelpersSportsRef):
             days_back = [0, 1, 3, 7]
             for day_back in days_back:
                 commence_time = sub_n_days(commence_time_0, day_back)
-                url = f'https://api.the-odds-api.com///v4/historical/sports/{SPORT}/events/{event_id}/odds?apiKey={ODDS_API_KEY}&bookmakers={BOOKMAKERS}&markets={MARKETS}&date={commence_time}'
                 endpoint = f'/historical/sports/{self.sport}/events/{event_id}/odds'
-                res = requests.get(self.ODDS_API + endpoint, params={
-                    'apiKey': self.ODDS_API_KEY,
-                    'bookmakers': self.BOOKMAKERS
-                })
+                res = requests.get(
+                    self.ODDS_API + endpoint,
+                    params={
+                        'apiKey': self.ODDS_API_KEY,
+                        'bookmakers': self.ODDS_API_BOOKMAKERS[self.sport],
+                        'markets': self.ODDS_API_MARKETS[self.sport],
+                        'date': commence_time
+                    }
+                )
                 if res.json().get('error_code'):
                     output = [{'error': res.json().get('error_code')}]
                 else:
