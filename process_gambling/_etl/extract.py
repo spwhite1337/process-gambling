@@ -1,6 +1,7 @@
 import os
 from typing import Optional, List
 
+import requests
 import pandas as pd
 import sqlite3
 from tqdm import tqdm
