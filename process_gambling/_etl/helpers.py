@@ -87,19 +87,19 @@ class ExtractionHelpersSportsRef(Params):
 
             return df
 
-        def _download_historical_sports_ref(self) -> pd.DataFrame:
-            teams = [t['sports_ref_name'] for t in self.PARTICIPANTS_LOOKUP[self.sport]]
-            df = []
-            print(f'Downloading Historical Box Scores for {self.sport}')
-            for team in tqdm(teams):
-                for year in range(self.START_YEAR[self.sport], datetime.datetime.now().year):
-                    url = self.SPORTS_REF_API[self.sport]
-                    df_ = pd.read_html(f'{url}/teams/{team}/{year}.htm')
-                    df.append(df_[1].assign(year=year, team=team))
-                    # To avoid 429 errors, wait between pulls
-                    # https://www.sports-reference.com/bot-traffic.html
-                    time.sleep(30)
-            return pd.concat(df)
+    def _download_historical_sports_ref(self) -> pd.DataFrame:
+        teams = [t['sports_ref_name'] for t in self.PARTICIPANTS_LOOKUP[self.sport]]
+        df = []
+        print(f'Downloading Historical Box Scores for {self.sport}')
+        for team in tqdm(teams):
+            for year in range(self.START_YEAR[self.sport], datetime.datetime.now().year):
+                url = self.SPORTS_REF_API[self.sport]
+                df_ = pd.read_html(f'{url}/teams/{team}/{year}.htm')
+                df.append(df_[1].assign(year=year, team=team))
+                # To avoid 429 errors, wait between pulls
+                # https://www.sports-reference.com/bot-traffic.html
+                time.sleep(30)
+        return pd.concat(df)
 
 
 class ExtractionHelpersOddsApi(object):
