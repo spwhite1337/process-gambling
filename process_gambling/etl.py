@@ -18,6 +18,10 @@ def run(sport: str):
     df = api.extract_events()
     api.upload(df, f'BRONZE_ODDSAPI_EVENTS_{api.sport}')
 
+    df_events = api.download(f'BRONZE_ODDSAPI_EVENTS_{api.sport}')
+    df = api.extract_odds(df_events)
+    api.upload(df, f'BRONZE_ODDSAPI_HIST_ODDS_{api.sport}')
+
 
 if __name__ == '__main__':
     import argparse

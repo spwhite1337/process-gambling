@@ -106,12 +106,12 @@ class Extract(ExtractionHelpersSportsRef):
         return df
 
     @staticmethod
-    def sub_n_days(dt: str, n: int = 3):
+    def _sub_n_days(dt: str, n: int = 3):
         dt = datetime.datetime.strptime(dt, '%Y-%m-%dT%H:%M:%SZ') - datetime.timedelta(days=n)
         return str('T'.join(str(dt).split(' ')) + 'Z')
 
     @staticmethod
-    def parse_odds_output(r: Dict[str, Union[str, List]) -> List[Dict[str, str]]:
+    def _parse_odds_output(r: Dict[str, Union[str, List]) -> List[Dict[str, str]]:
         records = []
         # Parse top-level attributes
         timestamp = r.json()['timestamp']
@@ -168,7 +168,7 @@ class Extract(ExtractionHelpersSportsRef):
         return records
 
 
-    def extract_odds(self) -> pd.DataFrame:
+    def extract_odds(self, df_events: pd.DataFrame) -> pd.DataFrame:
         print(f'Extracting Odds for {self.sport}')
         df = []
         for _, r in tqdm(df_events.iterrows(), total=df_events.shape[0]):
@@ -176,7 +176,7 @@ class Extract(ExtractionHelpersSportsRef):
             commence_time_0 = r['commence_time']
             days_back = [0, 1, 3, 7]
             for day_back in days_back:
-                commence_time = sub_n_days(commence_time_0, day_back)
+                commence_time = self._sub_n_days(commence_time_0, day_back)
                 endpoint = f'/historical/sports/{self.sport}/events/{event_id}/odds'
                 res = requests.get(
                     self.ODDS_API + endpoint,
@@ -190,7 +190,7 @@ class Extract(ExtractionHelpersSportsRef):
                 if res.json().get('error_code'):
                     output = [{'error': res.json().get('error_code')}]
                 else:
-                    output = parse_odds_output(res)
+                    output = self._parse_odds_output(res)
                 df_ = pd.DataFrame.from_records(output).\
                     assign(days_back=day_back, event_id=event_id, commence_time_0=commence_time_0)
                 time.sleep(0.1)
