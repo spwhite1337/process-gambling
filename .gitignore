@@ -163,3 +163,5 @@ selenium-debug.log
 *security-sgps.py
 *security_backend.py
 
+data/
+
