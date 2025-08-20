@@ -16,11 +16,11 @@ class Extract(ExtractionHelpersSportsRef):
 
     def __init__(self, sport: str):
         super().__init__(sport=sport)
-        # Test authenticated with a generic endpoint
+        # Test authentication with a generic endpoint
         r = requests.get(self.ODDS_API + '/sports', params={'apiKey': self.ODDS_API_KEY})
-        self.odds_api_auth = r.status_code == 200:
+        self.odds_api_auth = r.status_code == 200
 
-    def check_credentials():
+    def check_credentials(self):
         if not self.odds_api_auth:
             raise Exception('Not Authenticated for ODDS-API')
 
