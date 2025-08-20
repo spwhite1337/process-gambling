@@ -43,7 +43,7 @@ class Extract(ExtractionHelpersSportsRef, ExtractionHelpersOddsApi):
         r = requests.get(self.ODDS_API + endpoint, params={'apiKey': self.ODDS_API_KEY})
         return pd.DataFrame.from_records(r.json()).assign(sport=self.sport)
 
-    def generate_participant_lookup(self) -> pd.DataFrame:
+    def generate_participants_lookup(self) -> pd.DataFrame:
         if self.sport in self.PARTICIPANTS_LOOKUP.keys():
             return pd.DataFrame.from_records(self.PARTICIPANTS_LOOKUP[self.sport])
         else:
