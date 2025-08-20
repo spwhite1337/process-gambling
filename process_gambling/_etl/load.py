@@ -15,6 +15,7 @@ class Load(Extract):
     def sync_from_s3(self):
         pass
 
+    @staticmethod
     def save_to_s3(filename: str, object_name: str):
         client = boto3.client('s3')
         client.upload_file(filename, 'scott-p-pwhite', object_name)
