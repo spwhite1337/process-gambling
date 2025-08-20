@@ -13,12 +13,12 @@ from process_gambling._etl.helpers import ExtractionHelpersSportsRef
 class Extract(ExtractionHelpersSportsRef):
     ODDS_API = 'https://api.the-odds-api.com/v4'
 
-    def download_sports(self) -> pd.DataFrame:
+    def extract_sports(self) -> pd.DataFrame:
         endpoint = '/sports'
         r = requests.get(self.ODDS_API + endpoint, params={'apiKey': self.ODDS_API_KEY})
         return pd.DataFrame.from_records(r.json())
 
-    def download_participants(self) -> pd.DataFrame:
+    def extract_participants(self) -> pd.DataFrame:
         endpoint = f'/sports/{self.sport}/participants'
         r = requests.get(self.ODDS_API + endpoint, params={'apiKey': self.ODDS_API_KEY})
         return pd.DataFrame.from_records(r.json()).assign(sport=self.sport)
@@ -30,7 +30,7 @@ class Extract(ExtractionHelpersSportsRef):
             print(f'No participants look-up for {self.sport}')
             return pd.DataFrame()
 
-    def download_scores(self) -> pd.DataFrame:
+    def extract_scores(self) -> pd.DataFrame:
         if self.sport in ['americanfootball_nfl']:
             df = self._download_historical_sports_ref()
             df = self._parse_sports_ref(df)
@@ -53,7 +53,7 @@ class Extract(ExtractionHelpersSportsRef):
             event_starts = df['kickoff_datetime'].to_list()
         return event_starts
 
-    def download_events(self) -> List[str]:
+    def extract_events(self) -> List[str]:
         # Get date-strings of each event-start-time
         event_starts = self._get_event_starts()
         # Pull all events at the listed kickoff-dates
@@ -144,7 +144,7 @@ class Extract(ExtractionHelpersSportsRef):
                     outcome_name = outcome['name']
                     outcome_price = outcome['price']
                     outcome_point = outcome.get('point')
-
+                    # Gather for record
                     record = {
                         'timestamp': timestamp,
                         'previous_timestamp': previous_timestamp,
@@ -168,7 +168,8 @@ class Extract(ExtractionHelpersSportsRef):
         return records
 
 
-    def download_odds(self) -> pd.DataFrame:
+    def extract_odds(self) -> pd.DataFrame:
+        print(f'Extracting Odds for {self.sport}')
         df = []
         for _, r in tqdm(df_events.iterrows(), total=df_events.shape[0]):
             event_id = r['id']
