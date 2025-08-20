@@ -6,9 +6,6 @@ def run(sport: str):
     df = api.extract_sports()
     api.upload(df, f'BRONZE_ODDSAPI_SPORTS')
 
-    if True:
-        return
-
     df = api.extract_participants()
     api.upload(df, f'BRONZE_ODDSAPI_PARTICIPANTS_{api.sport}')
 
