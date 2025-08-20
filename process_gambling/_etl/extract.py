@@ -1,5 +1,6 @@
 import os
-from typing import Optional, List
+import datetime
+from typing import Optional, List, Dict, Union
 
 import requests
 import pandas as pd
@@ -102,5 +103,93 @@ class Extract(ExtractionHelpersSportsRef):
         # De-dupe
         df['filter'] = df.groupby('id')['query_date'].transform('max')
         df = df[df['filter'] == df['query_date']].drop('filter', axis=1)
+        return df
+
+    @staticmethod
+    def sub_n_days(dt: str, n: int = 3):
+        dt = datetime.datetime.strptime(dt, '%Y-%m-%dT%H:%M:%SZ') - datetime.timedelta(days=n)
+        return str('T'.join(str(dt).split(' ')) + 'Z')
+
+    @staticmethod
+    def parse_odds_output(r: Dict[str, Union[str, List]) -> List[Dict[str, str]]:
+        records = []
+        # Parse top-level attributes
+        timestamp = r.json()['timestamp']
+        previous_timestamp = r.json()['previous_timestamp']
+        next_timestamp = r.json()['next_timestamp']
+        # Dive into data
+        data = r.json()['data']
+        ## Parse 2nd-level attributes
+        event_id = data['id']
+        sport_key = data['sport_key']
+        sport_title = data['sport_title']
+        commence_time = data['commence_time']
+        home_team = data['home_team']
+        away_team = data['away_team']
+        ## Dive into 2nd-level
+        bookmakers = data['bookmakers']
+        for bookmaker in bookmakers:
+            # Parse attributes
+            bookmaker_key = bookmaker['key']
+            bookmaker_title = bookmaker['title']
+            bookmaker_last_update = bookmaker['last_update']
+            # Dive into 3rd-level
+            markets = bookmaker['markets']
+            for market in markets:
+                market_key = market['key']
+                market_last_update = market['last_update']
+                # Dive into 4th-level
+                outcomes = market['outcomes']
+                for outcome in outcomes:
+                    outcome_name = outcome['name']
+                    outcome_price = outcome['price']
+                    outcome_point = outcome.get('point')
+
+                    record = {
+                        'timestamp': timestamp,
+                        'previous_timestamp': previous_timestamp,
+                        'next_timestamp': next_timestamp,
+                        'event_id': event_id,
+                        'sport_key': sport_key,
+                        'sport_title': sport_title,
+                        'commenct_time': commence_time,
+                        'home_team': home_team,
+                        'away_team': away_team,
+                        'bookmaker_key': bookmaker_key,
+                        'bookmaker_title': bookmaker_title,
+                        'bookmaker_last_update': bookmaker_last_update,
+                        'market_key': market_key,
+                        'market_last_update': market_last_update,
+                        'outcome_name': outcome_name,
+                        'outcome_price': outcome_price,
+                        'outcome_point': outcome_point
+                    }
+                    records.append(record)
+        return records
+
+
+    def download_odds(self) -> pd.DataFrame:
+        df = []
+        for _, r in tqdm(df_events.iterrows(), total=df_events.shape[0]):
+            event_id = r['id']
+            commence_time_0 = r['commence_time']
+            days_back = [0, 1, 3, 7]
+            for day_back in days_back:
+                commence_time = sub_n_days(commence_time_0, day_back)
+                url = f'https://api.the-odds-api.com///v4/historical/sports/{SPORT}/events/{event_id}/odds?apiKey={ODDS_API_KEY}&bookmakers={BOOKMAKERS}&markets={MARKETS}&date={commence_time}'
+                endpoint = f'/historical/sports/{self.sport}/events/{event_id}/odds'
+                res = requests.get(self.ODDS_API + endpoint, params={
+                    'apiKey': self.ODDS_API_KEY,
+                    'bookmakers': self.BOOKMAKERS
+                })
+                if res.json().get('error_code'):
+                    output = [{'error': res.json().get('error_code')}]
+                else:
+                    output = parse_odds_output(res)
+                df_ = pd.DataFrame.from_records(output).\
+                    assign(days_back=day_back, event_id=event_id, commence_time_0=commence_time_0)
+                time.sleep(0.1)
+                df.append(df_)
+        df = pd.concat(df)
         return df
 
