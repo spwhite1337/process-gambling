@@ -2,6 +2,7 @@ from typing import Optional
 
 import os
 import sqlite3
+import requests
 
 from process_gambling.config import logger
 
@@ -64,16 +65,6 @@ class Params(object):
         if sport is not None:
             assert sport in self.VALID_SPORTS
         self.sport = sport
-        if not self.ODDS_API_KEY:
-            print('WARNING: No ODDS-API Key')
-            self.no_odds_api_key_flag = True
-        else:
-            self.no_odds_api_key_flag = False
-
-    def check_credentials(self):
-        if self.no_odds_api_key_flag:
-            logger.error('No ODDS-API key')
-            raise Exception('No ODDS-API key found')
 
     def connect_to_db(self):
         """

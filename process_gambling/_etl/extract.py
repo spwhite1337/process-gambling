@@ -14,6 +14,16 @@ from process_gambling.config import logger
 class Extract(ExtractionHelpersSportsRef):
     ODDS_API = 'https://api.the-odds-api.com/v4'
 
+    def __init__(self, sport: str):
+        super().__init__(sport=sport)
+        # Test authenticated with a generic endpoint
+        r = requests.get(self.ODDS_API + '/sports', params={'apiKey': self.ODDS_API_KEY})
+        self.odds_api_auth = r.status_code == 200:
+
+    def check_credentials():
+        if not self.odds_api_auth:
+            raise Exception('Not Authenticated for ODDS-API')
+
     def extract_sports(self) -> pd.DataFrame:
         self.check_credentials()
         logger.info('Extracting Sports')
