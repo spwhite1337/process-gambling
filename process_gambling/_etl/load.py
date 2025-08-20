@@ -12,6 +12,12 @@ class Load(Extract):
         df.to_sql(table_name, conn, if_exists='replace', index=False)
         self.close_db(conn)
 
+    def download(self, table_name: str) -> pd.DataFrame:
+        conn = self.connect_to_db()
+        df = pd.read_sql(f'SELECT * FROM {table_name}', conn)
+        self.close_db(conn)
+        return df
+
     def sync_from_s3(self):
         pass
 
