@@ -10,7 +10,7 @@ from process_gambling.config import logger
 class Params(object):
     ODDS_API_KEY = os.environ.get('ODDS_API_KEY')
     DB_NAME = 'process_gambling'
-    DB_VERSION = 'v0'
+    DB_VERSION = 'v1'
     VALID_SPORTS = [
         'americanfootball_nfl'
     ]

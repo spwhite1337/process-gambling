@@ -4,14 +4,14 @@ from process_gambling._etl import Etl
 def run(sport: str):
     api = Etl(sport=sport)
     # This works
-    # df = api.extract_sports()
-    # api.upload(df, f'BRONZE_ODDSAPI_SPORTS')
+    df = api.extract_sports()
+    api.upload(df, f'BRONZE_ODDSAPI_SPORTS')
 
-    # df = api.extract_participants()
-    # api.upload(df, f'BRONZE_ODDSAPI_PARTICIPANTS_{api.sport}')
+    df = api.extract_participants()
+    api.upload(df, f'BRONZE_ODDSAPI_PARTICIPANTS_{api.sport}')
 
-    # df = api.generate_participants_lookup()
-    # api.upload(df, f'SILVER_TEAM_LOOKUPS_{api.sport}')
+    df = api.generate_participants_lookup()
+    api.upload(df, f'SILVER_TEAM_LOOKUPS_{api.sport}')
 
     df = api.extract_scores()
     api.upload(df, f'BRONZE_SCORES_{api.scores_data_source}_{api.sport}')
