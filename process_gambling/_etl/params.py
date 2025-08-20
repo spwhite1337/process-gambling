@@ -3,6 +3,8 @@ from typing import Optional
 import os
 import sqlite3
 
+from process_gambling.config import logger
+
 
 class Params(object):
     ODDS_API_KEY = os.environ.get('ODDS_API_KEY')
@@ -64,8 +66,19 @@ class Params(object):
         self.sport = sport
         if not self.ODDS_API_KEY:
             print('WARNING: No ODDS-API Key')
+            self.no_odds_api_key_flag = True
+        else:
+            self.no_odds_api_key_flag = False
+
+    def check_credentials(self):
+        if self.no_odds_api_key_flag:
+            logger.error('No ODDS-API key')
+            raise Exception('No ODDS-API key found')
 
     def connect_to_db(self):
+        """
+        For now, use a local SQLite DB
+        """
         if not os.path.exists('data'):
             os.makedirs('data')
         return sqlite3.connect(f'data/{self.DB_NAME}_{self.DB_VERSION}.db')

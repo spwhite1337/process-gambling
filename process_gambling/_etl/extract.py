@@ -15,12 +15,14 @@ class Extract(ExtractionHelpersSportsRef):
     ODDS_API = 'https://api.the-odds-api.com/v4'
 
     def extract_sports(self) -> pd.DataFrame:
+        self.check_credentials()
         logger.info('Extracting Sports')
         endpoint = '/sports'
         r = requests.get(self.ODDS_API + endpoint, params={'apiKey': self.ODDS_API_KEY})
         return pd.DataFrame.from_records(r.json())
 
     def extract_participants(self) -> pd.DataFrame:
+        self.check_credentials()
         logger.info(f'Extracting Participants in {self.sport}')
         endpoint = f'/sports/{self.sport}/participants'
         r = requests.get(self.ODDS_API + endpoint, params={'apiKey': self.ODDS_API_KEY})
@@ -34,6 +36,7 @@ class Extract(ExtractionHelpersSportsRef):
             return pd.DataFrame()
 
     def extract_scores(self) -> pd.DataFrame:
+        self.check_credentials()
         if self.sport in ['americanfootball_nfl']:
             df = self._download_historical_sports_ref()
             df = self._parse_sports_ref(df)
@@ -42,6 +45,7 @@ class Extract(ExtractionHelpersSportsRef):
         return df
 
     def extract_events(self, event_starts: List[str]) -> List[str]:
+        self.check_credentials()
         # Pull all events at the listed kickoff-dates
         df = []
         for event_start in event_starts:
@@ -155,6 +159,7 @@ class Extract(ExtractionHelpersSportsRef):
 
 
     def extract_odds(self, df_events: pd.DataFrame) -> pd.DataFrame:
+        self.check_credentials()
         print(f'Extracting Odds for {self.sport}')
         df = []
         for _, r in tqdm(df_events.iterrows(), total=df_events.shape[0]):
