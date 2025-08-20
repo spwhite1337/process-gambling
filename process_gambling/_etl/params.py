@@ -65,6 +65,9 @@ class Params(object):
         if sport is not None:
             assert sport in self.VALID_SPORTS
         self.sport = sport
+        self.scores_data_source = self.SCORES_DATA_SOURCE.get(sport)
+        self.odds_api_markets = self.ODDS_API_MARKETS.get(sport)
+        self.odds_api_bookmakers = self.ODDS_API_BOOKMAKERS.get(sport)
 
     def connect_to_db(self):
         """

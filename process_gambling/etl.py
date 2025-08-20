@@ -14,7 +14,7 @@ def run(sport: str):
     # api.upload(df, f'SILVER_TEAM_LOOKUPS_{api.sport}')
 
     df = api.extract_scores()
-    api.upload(df, f'BRONZE_SCORES_{api.SCORES_DATA_SOURCE}_{api.sport}')
+    api.upload(df, f'BRONZE_SCORES_{api.scores_data_source}_{api.sport}')
 
     event_starts = api.download_event_starts()
     df = api.extract_events(event_starts)

@@ -25,7 +25,7 @@ class Load(Extract):
             conn = self.connect_to_db()
             df = pd.read_sql(f"""
                 SELECT DISTINCT kickoff_datetime
-                FROM BRONZE_SPORTSREF_BOXSCORES_{self.sport}
+                FROM BRONZE_SCORES_{self.scores_data_source}_{self.sport}
                 -- Historical ODDS_API data starts at June 6, 2020
                 WHERE kickoff_datetime > DATE('2020-06-06')
                 ORDER BY kickoff_datetime

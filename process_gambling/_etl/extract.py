@@ -125,8 +125,8 @@ class Extract(ExtractionHelpersSportsRef, ExtractionHelpersOddsApi):
                     self.ODDS_API + endpoint,
                     params={
                         'apiKey': self.ODDS_API_KEY,
-                        'bookmakers': self.ODDS_API_BOOKMAKERS[self.sport],
-                        'markets': self.ODDS_API_MARKETS[self.sport],
+                        'bookmakers': self.odds_api_bookmakers,
+                        'markets': self.odds_api_markets,
                         'date': commence_time
                     }
                 )
