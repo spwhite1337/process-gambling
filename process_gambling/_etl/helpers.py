@@ -11,7 +11,7 @@ from process_gambling.config import logger
 
 class ExtractionHelpersSportsRef(Params):
     START_YEAR = {
-        'americanfootball_nfl': 2023
+        'americanfootball_nfl': 2015
     }
     SPORTS_REF_API = {
         'americanfootball_nfl': 'https://www.pro-football-reference.com/'
@@ -84,7 +84,7 @@ class ExtractionHelpersSportsRef(Params):
         teams = [t['sports_ref_name'] for t in self.PARTICIPANTS_LOOKUP[self.sport]]
         df = []
         logger.info(f'Downloading Historical Box Scores for {self.sport}')
-        for team in tqdm(teams[:3]):
+        for team in tqdm(teams):
             for year in range(self.START_YEAR[self.sport], datetime.datetime.now().year):
                 url = self.SPORTS_REF_API[self.sport]
                 df_ = pd.read_html(f'{url}/teams/{team}/{year}.htm')
