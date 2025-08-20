@@ -1,4 +1,5 @@
 import os
+import time
 import datetime
 from typing import Optional, List, Dict, Union
 
@@ -99,7 +100,6 @@ class Extract(ExtractionHelpersSportsRef, ExtractionHelpersOddsApi):
                 query_date=date,
                 query_commencetimefrom=commenceTimeFrom,
                 query_commencetimeto=commenceTimeTo,
-                url=url
             )
             df.append(df_)
             # Sleep to take it easy on the API
