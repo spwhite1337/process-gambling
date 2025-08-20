@@ -1,3 +1,4 @@
+from typing import Dict, List, Union
 import pytz
 import datetime
 import pandas as pd
@@ -99,4 +100,70 @@ class ExtractionHelpersSportsRef(Params):
                     # https://www.sports-reference.com/bot-traffic.html
                     time.sleep(30)
             return pd.concat(df)
+
+
+class ExtractionHelpersOddsApi(object):
+    ODDS_API = 'https://api.the-odds-api.com/v4'
+
+    @staticmethod
+    def _sub_n_days(dt: str, n: int = 3):
+        dt = datetime.datetime.strptime(dt, '%Y-%m-%dT%H:%M:%SZ') - datetime.timedelta(days=n)
+        return str('T'.join(str(dt).split(' ')) + 'Z')
+
+    @staticmethod
+    def _parse_odds_output(r: Dict[str, Union[str, List]]) -> List[Dict[str, str]]:
+        records = []
+        # Parse top-level attributes
+        timestamp = r.json()['timestamp']
+        previous_timestamp = r.json()['previous_timestamp']
+        next_timestamp = r.json()['next_timestamp']
+        # Dive into data
+        data = r.json()['data']
+        ## Parse 2nd-level attributes
+        event_id = data['id']
+        sport_key = data['sport_key']
+        sport_title = data['sport_title']
+        commence_time = data['commence_time']
+        home_team = data['home_team']
+        away_team = data['away_team']
+        ## Dive into 2nd-level
+        bookmakers = data['bookmakers']
+        for bookmaker in bookmakers:
+            # Parse attributes
+            bookmaker_key = bookmaker['key']
+            bookmaker_title = bookmaker['title']
+            bookmaker_last_update = bookmaker['last_update']
+            # Dive into 3rd-level
+            markets = bookmaker['markets']
+            for market in markets:
+                market_key = market['key']
+                market_last_update = market['last_update']
+                # Dive into 4th-level
+                outcomes = market['outcomes']
+                for outcome in outcomes:
+                    outcome_name = outcome['name']
+                    outcome_price = outcome['price']
+                    outcome_point = outcome.get('point')
+                    # Gather for record
+                    record = {
+                        'timestamp': timestamp,
+                        'previous_timestamp': previous_timestamp,
+                        'next_timestamp': next_timestamp,
+                        'event_id': event_id,
+                        'sport_key': sport_key,
+                        'sport_title': sport_title,
+                        'commenct_time': commence_time,
+                        'home_team': home_team,
+                        'away_team': away_team,
+                        'bookmaker_key': bookmaker_key,
+                        'bookmaker_title': bookmaker_title,
+                        'bookmaker_last_update': bookmaker_last_update,
+                        'market_key': market_key,
+                        'market_last_update': market_last_update,
+                        'outcome_name': outcome_name,
+                        'outcome_price': outcome_price,
+                        'outcome_point': outcome_point
+                    }
+                    records.append(record)
+        return records
 
