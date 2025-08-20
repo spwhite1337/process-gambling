@@ -7,7 +7,7 @@ from process_gambling._etl.extract import Extract
 
 class Load(Extract):
 
-    def load(df: pd.DataFrame, table_name: str):
+    def load(self, df: pd.DataFrame, table_name: str):
         conn = self.connect_to_db()
         df.to_sql(table_name, conn, if_exists='replace', index=False)
         self.close_db(conn)
