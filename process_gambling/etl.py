@@ -6,8 +6,11 @@ def run(sport: str):
     df = api.extract_sports()
     api.upload(df, f'BRONZE_ODDSAPI_SPORTS')
 
+    if True:
+        return
+
     df = api.extract_participants()
-    api.upload(df, f'BRONZE_ODDSAPI_PARTICIPANTS_{api.sport}'
+    api.upload(df, f'BRONZE_ODDSAPI_PARTICIPANTS_{api.sport}')
 
     df = api.generate_participants_lookup()
     api.upload(df, f'SILVER_TEAM_LOOKUPS_{api.sport}')

@@ -8,17 +8,20 @@ import sqlite3
 from tqdm import tqdm
 
 from process_gambling._etl.helpers import ExtractionHelpersSportsRef
+from process_gambling.config import logger
 
 
 class Extract(ExtractionHelpersSportsRef):
     ODDS_API = 'https://api.the-odds-api.com/v4'
 
     def extract_sports(self) -> pd.DataFrame:
+        logger.info('Extracting Sports')
         endpoint = '/sports'
         r = requests.get(self.ODDS_API + endpoint, params={'apiKey': self.ODDS_API_KEY})
         return pd.DataFrame.from_records(r.json())
 
     def extract_participants(self) -> pd.DataFrame:
+        logger.info(f'Extracting Participants in {self.sport}')
         endpoint = f'/sports/{self.sport}/participants'
         r = requests.get(self.ODDS_API + endpoint, params={'apiKey': self.ODDS_API_KEY})
         return pd.DataFrame.from_records(r.json()).assign(sport=self.sport)
@@ -94,7 +97,7 @@ class Extract(ExtractionHelpersSportsRef):
         return str('T'.join(str(dt).split(' ')) + 'Z')
 
     @staticmethod
-    def _parse_odds_output(r: Dict[str, Union[str, List]) -> List[Dict[str, str]]:
+    def _parse_odds_output(r: Dict[str, Union[str, List]]) -> List[Dict[str, str]]:
         records = []
         # Parse top-level attributes
         timestamp = r.json()['timestamp']
