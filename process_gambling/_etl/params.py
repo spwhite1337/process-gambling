@@ -11,6 +11,9 @@ class Params(object):
     VALID_SPORTS = [
         'americanfootball_nfl'
     ]
+    SCORES_DATA_SOURCE = {
+        'americanfootball': 'SPORTSREF'
+    }
 
     PARTICIPANTS_LOOKUP = {
         'americanfootball_nfl': [
