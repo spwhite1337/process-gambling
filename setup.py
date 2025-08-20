@@ -14,5 +14,6 @@ setup(
         'requests',
         'plotly',
         'tqdm',
+        'boto3'
     ],
 )

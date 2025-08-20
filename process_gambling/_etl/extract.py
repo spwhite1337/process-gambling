@@ -9,7 +9,7 @@ from process_gambling._etl.helpers import ExtractionHelpersSportsRef
 
 
 class Extract(ExtractionHelpersSportsRef):
-    ODDS_API = 'https://api.the-odds-api.com/v4
+    ODDS_API = 'https://api.the-odds-api.com/v4'
 
     def download_sports(self) -> pd.DataFrame:
         endpoint = '/sports'
