@@ -4,6 +4,7 @@ import sqlite3
 
 class Params(object):
     ODDS_API_KEY = os.environ.get('ODDS_API_KEY')
+    DB_VERSION = 'v0'
     VALID_SPORTS = [
         'americanfootball_nfl'
     ]
@@ -53,8 +54,9 @@ class Params(object):
             print('WARNING: No ODDS-API Key')
 
     def connect_to_db(self):
-        conn = sqlite3.connect('data/process_gambling.db')
-        return conn
+        if not os.path.exists('data'):
+            os.makedirs('data')
+        return sqlite3.connect(f'data/process_gambling_{self.DB_VERSION}.db')
 
     @staticmethod
     def close_db(conn):

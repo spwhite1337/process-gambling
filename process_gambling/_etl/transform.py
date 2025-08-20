@@ -1,6 +1,6 @@
-from process_gambling._etl.extract import Extract
+from process_gambling._etl.load import Load
 
 
-class Transform(Extract):
+class Transform(Load):
     pass
 

@@ -1,9 +1,13 @@
 import sqlite3
 
-from process_gambling._etl.transform import Transform
+from process_gambling._etl.extract import Extract
 
 
-class Load(Transform):
+class Load(Extract):
 
-    pass
+    def sync_from_s3(self):
+        pass
+
+    def save_to_s3(self):
+        pass
 
