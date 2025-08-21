@@ -15,13 +15,13 @@ class Params(object):
         'americanfootball_nfl'
     ]
     SCORES_DATA_SOURCE = {
-        'americanfootball': 'SPORTSREF'
+        'americanfootball_nfl': 'SPORTSREF'
     }
     ODDS_API_MARKETS = {
-        'americanfootball': 'h2h,spreads,totals'
+        'americanfootball_nfl': 'h2h,spreads,totals'
     }
     ODDS_API_BOOKMAKERS = {
-        'americanfootball': 'draftkings,fanduel'
+        'americanfootball_nfl': 'draftkings,fanduel'
     }
 
     PARTICIPANTS_LOOKUP = {
