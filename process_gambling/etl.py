@@ -23,6 +23,7 @@ def run(sport: str):
     #df = api.extract_odds(df_events)
     #api.upload(df, f'BRONZE_ODDSAPI_HIST_ODDS_{api.sport}')
 
+    api.transform_events()
     api.transform_scores()
 
 

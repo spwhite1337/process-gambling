@@ -1,9 +1,11 @@
 from process_gambling._etl.load import Load
+from process_gambling.config import logger
 
 
 class Transform(Load):
 
     def transform_scores(self):
+        logger.info('Transforming Scores')
         conn = self.connect_to_db()
         conn.cursor().execute(f'DROP TABLE IF EXISTS SILVER_EVENT_SCORES_{self.sport};')
         conn.cursor().execute(f"""
@@ -66,6 +68,7 @@ class Transform(Load):
         )
 
     def transform_events(self):
+        logger.info('Transforming Events')
         conn = self.connect_to_db()
         conn.cursor().execute(
         f'DROP TABLE IF EXISTS SILVER_EVENTS_LOOKUP_{self.sport};'
