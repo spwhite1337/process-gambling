@@ -1,8 +1,10 @@
 from process_gambling._etl.load import Load
+from process_gambling._etl.helper import TransformHelpers
+
 from process_gambling.config import logger
 
 
-class Transform(Load):
+class Transform(Load, TransformHelpers):
 
     def transform_scores(self):
         logger.info('Transforming Scores')
