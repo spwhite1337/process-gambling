@@ -1,5 +1,5 @@
 from process_gambling._etl.load import Load
-from process_gambling._etl.helper import TransformHelpers
+from process_gambling._etl.helpers import TransformHelpers
 
 from process_gambling.config import logger
 
