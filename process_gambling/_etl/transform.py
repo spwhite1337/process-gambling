@@ -6,6 +6,11 @@ from process_gambling.config import logger
 
 class Transform(Load, TransformHelpers):
 
+
+    def transform_odds(self):
+        logger.info('Transforming Odds')
+        conn = self.connect_to_db()
+
     def transform_scores(self):
         logger.info('Transforming Scores')
         conn = self.connect_to_db()
