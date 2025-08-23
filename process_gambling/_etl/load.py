@@ -5,6 +5,7 @@ import pandas as pd
 
 from process_gambling._etl.extract import Extract
 from process_gambling._etl.helpers import ExtractionHelpersOddsApi
+from process_gambling.config import logger
 
 
 class Load(Extract, ExtractionHelpersOddsApi):
@@ -24,6 +25,7 @@ class Load(Extract, ExtractionHelpersOddsApi):
         # Get event-starts for parameters in the ODDS_API
         if self.sport == 'americanfootball_nfl':
             conn = self.connect_to_db()
+            logger.info(f'Downloading Event-Starts for {self.sport}')
             df = pd.read_sql(f"""
                 SELECT DISTINCT kickoff_datetime
                 FROM BRONZE_SCORES_{self.scores_data_source}_{self.sport}

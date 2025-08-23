@@ -63,8 +63,9 @@ class Extract(ExtractionHelpersSportsRef, ExtractionHelpersOddsApi):
     def extract_events(self, event_starts: List[str]) -> List[str]:
         self.check_credentials(api='odds-api')
         # Pull all events at the listed kickoff-dates
+        logger.info(f'Extracting Events for {self.sport}')
         df = []
-        for event_start in event_starts:
+        for event_start in tqdm(event_starts):
             date = 'T'.join(event_start.split(' ')) + 'Z'
             # Start with a 10-minute window around the kickoff time from scores data
             commenceTimeFrom = 'T'.join(str(datetime.datetime.strptime(event_start, '%Y-%m-%d %H:%M:%S') - datetime.timedelta(minutes=10)).split(' ')) + 'Z'
