@@ -15,9 +15,9 @@ def run(sport: str):
     #df = api.extract_scores()
     #api.upload(df, f'BRONZE_SCORES_{api.scores_data_source}_{api.sport}')
 
-    #event_starts = api.download_event_starts()
-    #df = api.extract_events(event_starts)
-    #api.upload(df, f'BRONZE_ODDSAPI_EVENTS_{api.sport}')
+    event_starts = api.download_event_starts()
+    df = api.extract_events(event_starts)
+    api.upload(df, f'BRONZE_ODDSAPI_EVENTS_{api.sport}')
 
     #df_events = api.download(f'BRONZE_ODDSAPI_EVENTS_{api.sport}')
     #df = api.extract_odds(df_events)

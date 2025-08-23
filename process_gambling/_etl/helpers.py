@@ -330,4 +330,58 @@ class TransformHelpers(object):
             'car' team,
             'Carolina Panthers' team_name,
             2021 season
+
+        -- In this set, the query-date (which connects to ODDs-API) 
+        -- is different from the event-start (which needs to align with SCORES dt)
+        UNION
+        SELECT
+            'b714befa72fb5578bd57a78c6a8d93e9' event_id,
+            -- Align this with BRONZE sports scores
+            '2022-12-24 18:00:00' event_start,
+            -- This differs from event-start for select few games
+            STRFTIME('%Y-%m-%dT%H:%M:%SZ', '2022-12-24 19:00:00') query_date,
+            'oti' team,
+            'Tennessee Titans' team_name,
+            2022 season
+        UNION
+        SELECT
+            'b714befa72fb5578bd57a78c6a8d93e9' event_id,
+            '2022-12-24 18:00:00' event_start,
+            STRFTIME('%Y-%m-%dT%H:%M:%SZ', '2022-12-24 19:00:00') query_date,
+            'htx' team,
+            'Houston Texans' team_name,
+            2022 season
+        UNION
+        SELECT
+            'f88dcc788ebadb734a69fb98607f6951' event_id,
+            '2022-12-11 21:20:00' event_start,
+            STRFTIME('%Y-%m-%dT%H:%M:%SZ', '2022-12-11 21:00:00') query_date,
+            'den' team,
+            'Denver Broncos' team_name,
+            2022 season
+        UNION
+        SELECT
+            'f88dcc788ebadb734a69fb98607f6951' event_id,
+            '2022-12-11 21:20:00' event_start,
+            STRFTIME('%Y-%m-%dT%H:%M:%SZ', '2022-12-11 21:00:00') query_date,
+            'kan' team,
+            'Kansas City Chiefs' team_name,
+            2022 season
+        UNION
+        SELECT
+            'f9da2ac2a07745c39bb75946ebd8917d' event_id,
+            '2021-12-19 18:00:00' event_start,
+            STRFTIME('%Y-%m-%dT%H:%M:%SZ', '2021-12-19 21:25:00') query_date,
+            'rav' team,
+            'Baltimore Ravens' team_name,
+            2021 season
+        UNION
+        SELECT
+            'f9da2ac2a07745c39bb75946ebd8917d' event_id,
+            '2021-12-19 18:00:00' event_start,
+            STRFTIME('%Y-%m-%dT%H:%M:%SZ', '2021-12-19 21:25:00') query_date,
+            'gnb' team,
+            'Green Bay Packers' team_name,
+            2021 season
+
     """
