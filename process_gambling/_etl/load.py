@@ -28,6 +28,10 @@ class Load(Extract):
                 FROM BRONZE_SCORES_{self.scores_data_source}_{self.sport}
                 -- Historical ODDS_API data starts at June 6, 2020
                 WHERE kickoff_datetime > DATE('2020-06-06')
+                -- Impute some dates manually that didn't align between systems
+                UNION SELECT '2022-12-24 19:00:00' kickoff_datetime
+                UNION SELECT '2022-12-11 21:00:00' kickoff_datetime
+                UNION SELECT '2021-12-19 21:25:00' kickoff_datetime
                 ORDER BY kickoff_datetime
                 """, conn)
             self.close_db(conn)
