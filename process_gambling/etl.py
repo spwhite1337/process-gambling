@@ -19,12 +19,13 @@ def run(sport: str):
     #df = api.extract_events(event_starts)
     #api.upload(df, f'BRONZE_ODDSAPI_EVENTS_{api.sport}')
 
-    df_events = api.download(f'BRONZE_ODDSAPI_EVENTS_{api.sport}')
-    df = api.extract_odds(df_events)
-    api.upload(df, f'BRONZE_ODDSAPI_HIST_ODDS_{api.sport}')
+    #df_events = api.download(f'BRONZE_ODDSAPI_EVENTS_{api.sport}')
+    #df = api.extract_odds(df_events)
+    #api.upload(df, f'BRONZE_ODDSAPI_HIST_ODDS_{api.sport}')
 
-    api.transform_events()
-    api.transform_scores()
+    #api.transform_events()
+    #api.transform_scores()
+    api.transform_odds()
 
 
 if __name__ == '__main__':

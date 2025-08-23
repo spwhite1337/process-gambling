@@ -78,6 +78,8 @@ class Params(object):
         return sqlite3.connect(f'data/{self.DB_NAME}_{self.DB_VERSION}.db')
 
     @staticmethod
-    def close_db(conn):
+    def close_db(conn: Optional):
+        if conn is None:
+            return
         conn.close()
 

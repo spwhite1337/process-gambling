@@ -10,6 +10,221 @@ class Transform(Load, TransformHelpers):
     def transform_odds(self):
         logger.info('Transforming Odds')
         conn = self.connect_to_db()
+        conn.cursor().execute(f'DROP TABLE IF EXISTS SILVER_EVENT_ODDS_{self.sport};')
+        conn.cursor().execute(f"""
+        CREATE TABLE SILVER_EVENT_ODDS_{self.sport} AS
+            -- Pivot on event-id for silver-layer
+            SELECT
+                event_id,
+
+                -- Spreads pivoted
+                AVG(
+                    CASE WHEN
+                    home_team = outcome_name AND market_key = 'spreads' AND  bookmaker_title = 'DraftKings' AND days_back = 0
+                    THEN outcome_price ELSE NULL END
+                ) home_spread_price_draftkings_db0,
+                AVG(
+                    CASE WHEN
+                    home_team = outcome_name AND market_key = 'spreads' AND bookmaker_title = 'DraftKings' AND days_back = 0
+                    THEN outcome_point ELSE NULL END
+                ) home_spread_point_draftkings_db0,
+                AVG(
+                    CASE WHEN
+                    home_team = outcome_name AND market_key = 'spreads' AND bookmaker_title = 'DraftKings' AND days_back = 1
+                    THEN outcome_price ELSE NULL END
+                ) home_spread_price_draftkings_db1,
+                AVG(
+                    CASE WHEN
+                    home_team = outcome_name AND market_key = 'spreads' AND bookmaker_title = 'DraftKings'  AND days_back = 1
+                    THEN outcome_point ELSE NULL END
+                ) home_spread_point_draftkings_db1,
+                AVG(
+                    CASE WHEN 
+                    home_team = outcome_name AND market_key = 'spreads' AND bookmaker_title = 'DraftKings' AND days_back = 3
+                    THEN outcome_price ELSE NULL END
+                ) home_spread_price_draftkings_db3,
+                AVG(
+                    CASE WHEN 
+                    home_team = outcome_name AND market_key = 'spreads' AND bookmaker_title = 'DraftKings' AND days_back = 3
+                    THEN outcome_point ELSE NULL END
+                ) home_spread_point_draftkings_db3,
+                AVG(
+                    CASE WHEN 
+                    home_team = outcome_name AND market_key = 'spreads' AND bookmaker_title = 'DraftKings' AND days_back = 7
+                    THEN outcome_price ELSE NULL END
+                ) home_spread_price_draftkings_db7,
+                AVG(
+                    CASE WHEN 
+                    home_team = outcome_name AND market_key = 'spreads' AND bookmaker_title = 'DraftKings'  AND days_back = 7
+                    THEN outcome_point ELSE NULL END
+                ) home_spread_point_draftkings_db7,
+                AVG(
+                    CASE WHEN 
+                    away_team = outcome_name AND market_key = 'spreads' AND  bookmaker_title = 'DraftKings' AND days_back = 0
+                    THEN outcome_price ELSE NULL END
+                ) away_spread_price_draftkings_db0,
+                AVG(
+                    CASE WHEN 
+                    away_team = outcome_name AND market_key = 'spreads' AND bookmaker_title = 'DraftKings' AND days_back = 0
+                    THEN outcome_point ELSE NULL END
+                ) away_spread_point_draftkings_db0,
+                AVG(
+                    CASE WHEN 
+                    away_team = outcome_name AND market_key = 'spreads' AND bookmaker_title = 'DraftKings' AND days_back = 1
+                    THEN outcome_price ELSE NULL END
+                ) away_spread_price_draftkings_db1,
+                AVG(
+                    CASE WHEN 
+                    away_team = outcome_name AND market_key = 'spreads' AND bookmaker_title = 'DraftKings'  AND days_back = 1
+                    THEN outcome_point ELSE NULL END
+                ) away_spread_point_draftkings_db1,
+                AVG(
+                    CASE WHEN 
+                    away_team = outcome_name AND market_key = 'spreads' AND bookmaker_title = 'DraftKings' AND days_back = 3
+                    THEN outcome_price ELSE NULL END
+                ) away_spread_price_draftkings_db3,
+                AVG(
+                    CASE WHEN 
+                    away_team = outcome_name AND market_key = 'spreads' AND bookmaker_title = 'DraftKings' AND days_back = 3
+                    THEN outcome_point ELSE NULL END
+                ) away_spread_point_draftkings_db3,
+                AVG(
+                    CASE WHEN 
+                    away_team = outcome_name AND market_key = 'spreads' AND bookmaker_title = 'DraftKings' AND days_back = 7
+                    THEN outcome_price ELSE NULL END
+                ) away_spread_price_draftkings_db7,
+                AVG(
+                    CASE WHEN 
+                    away_team = outcome_name AND market_key = 'spreads' AND bookmaker_title = 'DraftKings'  AND days_back = 7
+                    THEN outcome_point ELSE NULL END
+                ) away_spread_point_draftkings_db7,
+                
+                -- H2H
+                AVG(
+                    CASE WHEN 
+                    home_team = outcome_name AND market_key = 'h2h' AND  bookmaker_title = 'DraftKings' AND days_back = 0
+                    THEN outcome_price ELSE NULL END
+                ) home_h2h_draftkings_db0,
+                AVG(
+                    CASE WHEN 
+                    home_team = outcome_name AND market_key = 'h2h' AND  bookmaker_title = 'DraftKings' AND days_back = 1
+                    THEN outcome_price ELSE NULL END
+                ) home_h2h_draftkings_db1,
+                AVG(
+                    CASE WHEN 
+                    home_team = outcome_name AND market_key = 'h2h' AND  bookmaker_title = 'DraftKings' AND days_back = 3
+                    THEN outcome_price ELSE NULL END
+                ) home_h2h_draftkings_db3,
+                AVG(
+                    CASE WHEN 
+                    home_team = outcome_name AND market_key = 'h2h' AND  bookmaker_title = 'DraftKings' AND days_back = 7
+                    THEN outcome_price ELSE NULL END
+                ) home_h2h_draftkings_db7,
+                AVG(
+                    CASE WHEN 
+                    away_team = outcome_name AND market_key = 'h2h' AND  bookmaker_title = 'DraftKings' AND days_back = 0
+                    THEN outcome_price ELSE NULL END
+                ) away_h2h_draftkings_db0,
+                AVG(
+                    CASE WHEN 
+                    away_team = outcome_name AND market_key = 'h2h' AND  bookmaker_title = 'DraftKings' AND days_back = 1
+                    THEN outcome_price ELSE NULL END
+                ) away_h2h_draftkings_db1,
+                AVG(
+                    CASE WHEN 
+                    away_team = outcome_name AND market_key = 'h2h' AND  bookmaker_title = 'DraftKings' AND days_back = 3
+                    THEN outcome_price ELSE NULL END
+                ) away_h2h_draftkings_db3,
+                AVG(
+                    CASE WHEN 
+                    away_team = outcome_name AND market_key = 'h2h' AND  bookmaker_title = 'DraftKings' AND days_back = 7
+                    THEN outcome_price ELSE NULL END
+                ) away_h2h_draftkings_db7,
+                AVG(
+                    CASE WHEN 
+                    outcome_name = 'Over' AND market_key = 'totals' AND  bookmaker_title = 'DraftKings' AND days_back = 0
+                    THEN outcome_price ELSE NULL END
+                ) over_total_price_draftkings_db0,
+                AVG(
+                    CASE WHEN 
+                    outcome_name = 'Over' AND market_key = 'totals' AND bookmaker_title = 'DraftKings' AND days_back = 0
+                    THEN outcome_point ELSE NULL END
+                ) over_total_point_draftkings_db0,
+                AVG(
+                    CASE WHEN 
+                    outcome_name = 'Over' AND market_key = 'totals' AND bookmaker_title = 'DraftKings' AND days_back = 1
+                    THEN outcome_price ELSE NULL END
+                ) over_total_price_draftkings_db1,
+                AVG(
+                    CASE WHEN 
+                    outcome_name = 'Over' AND market_key = 'totals' AND bookmaker_title = 'DraftKings'  AND days_back = 1
+                    THEN outcome_point ELSE NULL END
+                ) over_total_point_draftkings_db1,
+                AVG(
+                    CASE WHEN 
+                    outcome_name = 'Over' AND market_key = 'totals' AND bookmaker_title = 'DraftKings' AND days_back = 3
+                    THEN outcome_price ELSE NULL END
+                ) over_total_price_draftkings_db3,
+                AVG(
+                    CASE WHEN 
+                    outcome_name = 'Over' AND market_key = 'totals' AND bookmaker_title = 'DraftKings' AND days_back = 3
+                    THEN outcome_point ELSE NULL END
+                ) over_total_point_draftkings_db3,
+                AVG(
+                    CASE WHEN 
+                    outcome_name = 'Over' AND market_key = 'totals' AND bookmaker_title = 'DraftKings' AND days_back = 7
+                    THEN outcome_price ELSE NULL END
+                ) over_total_price_draftkings_db7,
+                AVG(
+                    CASE WHEN 
+                    outcome_name = 'Over' AND market_key = 'totals' AND bookmaker_title = 'DraftKings'  AND days_back = 7
+                    THEN outcome_point ELSE NULL END
+                ) over_total_point_draftkings_db7,
+                AVG(
+                    CASE WHEN 
+                    outcome_name = 'Under' AND market_key = 'totals' AND  bookmaker_title = 'DraftKings' AND days_back = 0
+                    THEN outcome_price ELSE NULL END
+                ) under_total_price_draftkings_db0,
+                AVG(
+                    CASE WHEN 
+                    outcome_name = 'Under' AND market_key = 'totals' AND bookmaker_title = 'DraftKings' AND days_back = 0
+                    THEN outcome_point ELSE NULL END
+                ) under_total_point_draftkings_db0,
+                AVG(
+                    CASE WHEN 
+                    outcome_name = 'Under' AND market_key = 'totals' AND bookmaker_title = 'DraftKings' AND days_back = 1
+                    THEN outcome_price ELSE NULL END
+                ) under_total_price_draftkings_db1,
+                AVG(
+                    CASE WHEN 
+                    outcome_name = 'Under' AND market_key = 'totals' AND bookmaker_title = 'DraftKings'  AND days_back = 1
+                    THEN outcome_point ELSE NULL END
+                ) under_total_point_draftkings_db1,
+                AVG(
+                    CASE WHEN 
+                    outcome_name = 'Under' AND market_key = 'totals' AND bookmaker_title = 'DraftKings' AND days_back = 3
+                    THEN outcome_price ELSE NULL END
+                ) under_total_price_draftkings_db3,
+                AVG(
+                    CASE WHEN 
+                    outcome_name = 'Under' AND market_key = 'totals' AND bookmaker_title = 'DraftKings' AND days_back = 3
+                    THEN outcome_point ELSE NULL END
+                ) under_total_point_draftkings_db3,
+                AVG(
+                    CASE WHEN 
+                    outcome_name = 'Under' AND market_key = 'totals' AND bookmaker_title = 'DraftKings' AND days_back = 7
+                    THEN outcome_price ELSE NULL END
+                ) under_total_price_draftkings_db7,
+                AVG(
+                    CASE WHEN 
+                    outcome_name = 'Under' AND market_key = 'totals' AND bookmaker_title = 'DraftKings'  AND days_back = 7
+                    THEN outcome_point ELSE NULL END
+                ) under_total_point_draftkings_db7
+
+            FROM BRONZE_ODDSAPI_HIST_ODDS_americanfootball_nfl
+            GROUP BY event_id
+        """)
+        self.close_db(conn)
 
     def transform_scores(self):
         logger.info('Transforming Scores')
@@ -73,6 +288,7 @@ class Transform(Load, TransformHelpers):
         ;
         """
         )
+        self.close_db(conn)
 
     def transform_events(self):
         logger.info('Transforming Events')
@@ -187,3 +403,5 @@ class Transform(Load, TransformHelpers):
         ;
         """
         )
+        self.close_db(conn)
+
