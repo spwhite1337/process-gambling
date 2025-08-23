@@ -4,9 +4,10 @@ import sqlite3
 import pandas as pd
 
 from process_gambling._etl.extract import Extract
+from process_gambling._etl.helpers import ExtractionHelpersOddsApi
 
 
-class Load(Extract):
+class Load(Extract, ExtractionHelpersOddsApi):
 
     def upload(self, df: pd.DataFrame, table_name: str):
         conn = self.connect_to_db()
@@ -29,9 +30,7 @@ class Load(Extract):
                 -- Historical ODDS_API data starts at June 6, 2020
                 WHERE kickoff_datetime > DATE('2020-06-06')
                 -- Impute some dates manually that didn't align between systems
-                UNION SELECT '2022-12-24 19:00:00' kickoff_datetime
-                UNION SELECT '2022-12-11 21:00:00' kickoff_datetime
-                UNION SELECT '2021-12-19 21:25:00' kickoff_datetime
+                {self.manual_impute_event_starts}
                 ORDER BY kickoff_datetime
                 """, conn)
             self.close_db(conn)
