@@ -150,7 +150,7 @@ class ExtractionHelpersOddsApi(object):
                         'next_timestamp': next_timestamp,
                         'event_id': event_id,
                         'sport_key': sport_key,
-                        'sport_title': sport_title,
+                        'commence_time': commence_time,
                         'commenct_time': commence_time,
                         'home_team': home_team,
                         'away_team': away_team,
