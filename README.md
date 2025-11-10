@@ -23,7 +23,11 @@ The __Gold Layer__ are the key results of the data and include test / training s
 
 ### Modeling
 
-Exploratoy Data Analysis (EDA) is found in `process_gambling/notebooks/EDA.ipynb` and a model prototype is found in `process_gambling/notebooks/model_prototype.ipynb`
+- Exploratoy Data Analysis (EDA) is found in `process_gambling/notebooks/EDA.ipynb` 
+- A model prototype is found in `process_gambling/notebooks/model_prototype.ipynb`
 
 ## Future Work
 
+- Productionalize model prototype
+- Schedule data pipeline for weekly data pulls, model outputs
+- Display results on [personal website](www.scottpwhite.com) (temporarily hosted at [http://3.19.58.181/](http link)). Website code is at [repo](https://github.com/spwhite1337/website
