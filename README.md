@@ -21,6 +21,9 @@ The __Silver Layer__ begins with "look-up" tables that connects participants and
 
 The __Gold Layer__ are the key results of the data and include test / training sets for ML model derivatioion, key visualizations, and other small, clean, interpretable datasets that underly key results and insights. In my experience, this is the data that executives or clients ask for without allocating resources to go from Bronze to Gold. 
 
+### Modeling
+
+Exploratoy Data Analysis (EDA) is found in `process_gambling/notebooks/EDA.ipynb` and a model prototype is found in `process_gambling/notebooks/model_prototype.ipynb`
 
 ## Future Work
 
