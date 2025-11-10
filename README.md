@@ -30,4 +30,4 @@ The __Gold Layer__ are the key results of the data and include test / training s
 
 - Productionalize model prototype
 - Schedule data pipeline for weekly data pulls, model outputs
-- Display results on [personal website](www.scottpwhite.com) (temporarily hosted at [http://3.19.58.181/](http link)). Website code is at [repo](https://github.com/spwhite1337/website
+- Display results on [personal website](www.scottpwhite.com) (temporarily hosted at http://3.19.58.181/. Website code is at [repo](https://github.com/spwhite1337/website
