@@ -1,2 +1,3 @@
-data_version = 'v1'
-model_version = 'v0'
+DATA_VERSION = 'v1'
+MODEL_VERSION = 'v0'
+
