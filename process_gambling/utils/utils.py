@@ -21,7 +21,7 @@ def _data_exists_in_s3() -> bool:
 def run_query(query: str) -> pd.DataFrame:
     if os.environ.get('DB_ENGINE', 'SQLITE') == 'SQLITE':
         conn = sqlite3.connect(f'{os.getcwd()}/cache/process_gambling_{DATA_VERSION}.db')
-        df = pd.read_sql(query)
+        df = pd.read_sql(query, conn)
         conn.close()
         return df
     else:

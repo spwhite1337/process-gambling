@@ -7,6 +7,8 @@ from process_gambling.utils.queries import queries
 
 class Etl(Params):
 
-    def download(self): 
+    def download(self) -> pd.DataFrame: 
         query = queries[self.sport]['training']
+        df = run_query(query)
+        return df
 
