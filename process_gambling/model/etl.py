@@ -23,14 +23,14 @@ class Etl(Params):
         for n_games in n_gamess:
             for metric in metrics:
                 # Calculate rolling windows in pandas bc local sqlite is weird version
-                df_in[f'{metric}_window_{n_games}'] = df_in.\
+                df[f'{metric}_window_{n_games}'] = df.\
                     groupby('team', observed=False)[metric].\
                     apply(lambda x: x.shift(1).rolling(window=n_games).mean()).\
                     reset_index(drop=True)
         
         # Get one record for an event, defined as the home-team
-        df = df_in[df_in['is_home'] == 1]
-        df_opp = df_in[df_in['is_home'] == 0].\
+        df_ = df[df['is_home'] == 1]
+        df_opp = df[df['is_home'] == 0].\
             drop('opponent', axis=1).rename(columns={'team_name': 'opponent'})
         subset_cols = []
         for n_games in n_gamess:
@@ -38,7 +38,11 @@ class Etl(Params):
                 col = f'{metric}_window_{n_games}'
                 df_opp = df_opp.rename(columns={col: 'opponent_' + col})
                 subset_cols.append('opponent_' + col)
-        df = df.merge(df_opp[['event_id', 'opponent'] + subset_cols], on=['event_id', 'opponent'])
-        return df
+        df_ = df_.merge(df_opp[['event_id', 'opponent'] + subset_cols], on=['event_id', 'opponent'])
+        return df_
 
+    def download(self) -> pd.DataFrame:
+        df = self._extract()
+        df = self._transform(df)
+        return df
 
