@@ -8,7 +8,7 @@ def _data_exists_in_s3() -> bool:
     try:
         client.head_object(
                 Bucket='scott-p-white', 
-                Key='code/process_gambling/data/process_gambling_{}.db'.format(DATA_VERSION)
+                Key=f'code/process_gambling/data/process_gambling_{DATA_VERSION}.db'
              )
         return True
     except:
@@ -25,8 +25,10 @@ def run(sport: str):
         client = boto3.client('s3')
         client.download_file(
             'scott-p-white',
-            'code/process_gambling/data/process_gambling_{}.db'.format(DATA_VERSION)
+            f'code/process_gambling/data/process_gambling_{DATA_VERSION}.db',
+            os.path.join(cache_dir, f'process_gambling_{DATA_VERSION}.db')
         )
+        print(f'Downloaded Data Version {DATA_VERSION}')
         return
 
     api = Etl(sport=sport)
