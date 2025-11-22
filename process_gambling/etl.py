@@ -1,18 +1,8 @@
 import os
 import boto3
 from process_gambling._etl import Etl
+from process_gambling.utils.utils import _data_exists_in_s3
 from process_gambling import DATA_VERSION
-
-def _data_exists_in_s3() -> bool:
-    client = boto3.client('s3')
-    try:
-        client.head_object(
-                Bucket='scott-p-white', 
-                Key=f'code/process_gambling/data/process_gambling_{DATA_VERSION}.db'
-             )
-        return True
-    except:
-        return False
 
 
 def run(sport: str):
