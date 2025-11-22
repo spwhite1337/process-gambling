@@ -1,6 +1,7 @@
 
 queries = {
-    'training': """
+    'americanfootball_nfl': {
+        'training': """
 SELECT
     event_id,
     team,
@@ -98,5 +99,5 @@ FROM (
 WHERE week_no NOT IN ('Wild Card', 'Division', 'Conf. Champ.', 'SuperBowl')
 ORDER BY event_start, event_id, team_name
     """
+    }
 }
-
