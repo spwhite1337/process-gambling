@@ -7,8 +7,38 @@ from process_gambling.utils.queries import queries
 
 class Etl(Params):
 
-    def download(self) -> pd.DataFrame: 
+    def _extract(self) -> pd.DataFrame: 
         query = queries[self.sport]['training']
         df = run_query(query)
         return df
+
+    def _transform(self, df: pd.DataFrame) -> pd.DataFrame:
+        n_gamess, metrics = [3, 5, 7], [
+            'team_win',
+            'team_win_ats', 
+            'team_margin_ats_abs', 
+            'over_win', 
+            'over_margin_abs'
+        ]
+        for n_games in n_gamess:
+            for metric in metrics:
+                # Calculate rolling windows in pandas bc local sqlite is weird version
+                df_in[f'{metric}_window_{n_games}'] = df_in.\
+                    groupby('team', observed=False)[metric].\
+                    apply(lambda x: x.shift(1).rolling(window=n_games).mean()).\
+                    reset_index(drop=True)
+        
+        # Get one record for an event, defined as the home-team
+        df = df_in[df_in['is_home'] == 1]
+        df_opp = df_in[df_in['is_home'] == 0].\
+            drop('opponent', axis=1).rename(columns={'team_name': 'opponent'})
+        subset_cols = []
+        for n_games in n_gamess:
+            for metric in metrics:
+                col = f'{metric}_window_{n_games}'
+                df_opp = df_opp.rename(columns={col: 'opponent_' + col})
+                subset_cols.append('opponent_' + col)
+        df = df.merge(df_opp[['event_id', 'opponent'] + subset_cols], on=['event_id', 'opponent'])
+        return df
+
 
