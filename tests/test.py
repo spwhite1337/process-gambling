@@ -7,10 +7,9 @@ class Tests(unittest.TestCase):
         client = boto3.client('s3')
 
     def test_model(self):
-        from process_gambling.model.wrangle import Wrangle
-        mdl = Wrangle(sport='americanfootball_nfl', version='v0')
+        from process_gambling.model.train import Train
+        mdl = Train(sport='americanfootball_nfl', version='v0')
         df = mdl.download()
         df_train, df_test = mdl.fit_transform(df)
-        print(df_train.shape)
-        print(df_test.shape)
+        mdl.train(df_train)
 

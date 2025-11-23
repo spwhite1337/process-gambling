@@ -17,8 +17,8 @@ class Wrangle(Etl):
         # Maybe drop 2020 and prior due to different game? Maybe time filter?
         # df_all = df_all[df_all['season'] > 2020]
 
-        df_train = df[df['season'] != 2024].copy()
-        df_test = df[df['season'] == 2024].copy()
+        df_train = df[df['season'] < self.model_params['val_year']].copy()
+        df_test = df[df['season'] == self.model_params['val_year']].copy()
         return df_train, df_test
 
     def transform(self, df: pd.DataFrame) -> pd.DataFrame:

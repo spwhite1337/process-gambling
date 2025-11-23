@@ -13,7 +13,8 @@ class Params(object):
                     'max_iter': -1,
                     'probability': True
                 },
-                'response_col': 'team_win_ats'
+                'response_col': 'team_win_ats',
+                'val_year': 2024
             }
         }
     }
