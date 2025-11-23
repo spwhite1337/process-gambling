@@ -35,4 +35,5 @@ class Train(Wrangle):
         )
         self.mdl.fit(df[self.features], df[self.response_col], groups=df['season'])
         df_cv = pd.DataFrame(self.mdl.cv_results_)
+        print(df_cv)
 

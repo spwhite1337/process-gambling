@@ -7,9 +7,10 @@ class Tests(unittest.TestCase):
         client = boto3.client('s3')
 
     def test_model(self):
-        from process_gambling.model.train import Train
-        mdl = Train(sport='americanfootball_nfl', version='v0')
+        from process_gambling.model import Model
+        mdl = Model(sport='americanfootball_nfl', version='v0')
         df = mdl.download()
         df_train, df_test = mdl.fit_transform(df)
         mdl.train(df_train)
+        mdl.validate(df_test)
 
