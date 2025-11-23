@@ -15,7 +15,7 @@ class Etl(Params):
         df = run_query(query)
         return df
 
-    def _transform(self, df: pd.DataFrame) -> pd.DataFrame:
+    def _transform_extraction(self, df: pd.DataFrame) -> pd.DataFrame:
         n_gamess, metrics = [3, 5, 7], [
             'team_win',
             'team_win_ats', 
@@ -46,6 +46,6 @@ class Etl(Params):
 
     def download(self) -> pd.DataFrame:
         df = self._extract()
-        df = self._transform(df)
+        df = self._transform_extraction(df)
         return df
 
