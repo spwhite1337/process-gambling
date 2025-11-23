@@ -20,6 +20,8 @@ def _data_exists_in_s3() -> bool:
 
 def run_query(query: str) -> pd.DataFrame:
     if os.environ.get('DB_ENGINE', 'SQLITE') == 'SQLITE':
+        if not os.path.exists(f'{os.getcwd()}/cache/process_gambling_{DATA_VERSION}.db'):
+            raise FileNotFoundError('No .db locally, did you download it from S3?')
         conn = sqlite3.connect(f'{os.getcwd()}/cache/process_gambling_{DATA_VERSION}.db')
         df = pd.read_sql(query, conn)
         conn.close()
