@@ -12,7 +12,8 @@ class Params(object):
                     'penalty': 'l2',
                     'max_iter': -1,
                     'probability': True
-                }
+                },
+                'response_col': 'team_win_ats'
             }
         }
     }
@@ -37,4 +38,5 @@ class Params(object):
     def __init__(self, sport: str = 'americanfootball_nfl', version: str = 'v0'):
         self.sport = sport
         self.model_version = version
+        self.model_params = self.MODEL_PARAMS[sport][version]
 
