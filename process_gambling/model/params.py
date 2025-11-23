@@ -6,7 +6,7 @@ class Params(object):
     MODEL_PARAMS = {
         'americanfootball_nfl': {
             'v0': {
-                'feature_set': 'base'
+                'feature_set': 'base',
                 'model_type': 'linear_svc',
                 'hyper_params': {
                     'penalty': 'l2',
