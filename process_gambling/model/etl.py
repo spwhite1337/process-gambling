@@ -1,13 +1,18 @@
+import os
 import pandas as pd
 
 from process_gambling.model.params import Params
+from process_gambling.etl import run as run_etl
 from process_gambling.utils.utils import run_query
 from process_gambling.utils.queries import queries
+from process_gambling import DATA_VERSION
 
 
 class Etl(Params):
 
     def _extract(self) -> pd.DataFrame: 
+        if not os.path.exists(os.path.join(os.getcwd(), 'cache', f'process_gambling_{DATA_VERSION}.db')):
+            raise FileNotFoundError('No Data on machine, did you download from S3?')
         query = queries[self.sport]['training']
         df = run_query(query)
         return df
