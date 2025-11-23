@@ -13,7 +13,7 @@ class Wrangle(Etl):
         return df
 
     def fit_transform(self, df: pd.DataFrame) -> Tuple[pd.DataFrame, pd.DataFrame]:
-        df = df[groups + features + [response]]
+        df = df[self.GROUP_COLS + self.features + [self.response_col]]
         # Maybe drop 2020 and prior due to different game? Maybe time filter?
         # df_all = df_all[df_all['season'] > 2020]
 
