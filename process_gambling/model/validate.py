@@ -1,5 +1,6 @@
 import pandas as pd
 import numpy as np
+from scipy.stats import binomtest
 
 from process_gambling.model.train import Train
 
@@ -18,5 +19,6 @@ class Validate(Train):
         for th in np.linspace(val_preds.min(), val_preds.max(), 10):
             wins = (1-df_plot[df_plot['preds'] <= th]['trues']).sum()
             losses = (df_plot[df_plot['preds'] <= th]['trues']).sum()
-            print(f'th: {round(th, 3)}, {wins}, {losses}, {round(wins/(wins+losses), 3)}')
+            pvalue = binomtest(wins, wins+losses, 0.5).pvalue
+            print(f'th: {round(th, 3)}, {wins}, {losses}, {round(wins/(wins+losses), 3)}, pvalue: {round(pvalue, 2)}')
 
