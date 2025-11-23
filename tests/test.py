@@ -11,6 +11,5 @@ class Tests(unittest.TestCase):
         mdl = Train(sport='americanfootball_nfl', version='v0')
         df = mdl.download()
         df_train, df_test = mdl.fit_transform(df)
-        print(df.isna().mean())
         mdl.train(df_train)
 

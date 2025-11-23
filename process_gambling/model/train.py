@@ -34,5 +34,5 @@ class Train(Wrangle):
             refit=True
         )
         self.mdl.fit(df[self.features], df[self.response_col], groups=df['season'])
-        df_cv = pd.DataFrame(mdl.cv_results_)
+        df_cv = pd.DataFrame(self.mdl.cv_results_)
 
