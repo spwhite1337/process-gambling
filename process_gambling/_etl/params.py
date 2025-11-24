@@ -80,7 +80,7 @@ class Params(object):
         """
         if not os.path.exists('data'):
             os.makedirs('data')
-        return sqlite3.connect(f'data/{self.DB_NAME}_{self.DB_VERSION}.db')
+        return sqlite3.connect(os.path.join(os.getcwd(), f'cache/{self.DB_NAME}_{self.DB_VERSION}.db'))
 
     @staticmethod
     def close_db(conn: Optional):

@@ -13,6 +13,7 @@ class Load(Extract, ExtractionHelpersOddsApi):
     def upload(self, df: pd.DataFrame, table_name: str):
         conn = self.connect_to_db()
         df.to_sql(table_name, conn, if_exists='replace', index=False)
+        print(f'Uploaded {table_name}')
         self.close_db(conn)
 
     def download(self, table_name: str) -> pd.DataFrame:

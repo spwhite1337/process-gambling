@@ -51,7 +51,6 @@ class Run(Etl):
         self.transform_odds()
 
     def _run_update(self):
-        print('here')
         df = self.extract_scores()
         self.upload(df, f'BRONZE_SCORES_{self.scores_data_source}_{self.sport}_UPDATE')
 
