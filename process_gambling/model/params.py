@@ -9,9 +9,9 @@ class Params(object):
                 'feature_set': 'base',
                 'model_type': 'linear_svc',
                 'hyper_params': {
-                    'penalty': 'l2',
-                    'max_iter': -1,
-                    'probability': True
+                    'param_grid': {
+                        'mdl__C': [0.003, 0.01, 0.03, 0.1, 0.3]
+                    }
                 },
                 'response_col': 'team_win_ats',
                 'val_year': 2024
@@ -22,6 +22,9 @@ class Params(object):
     FEATURE_SETS = {
         'americanfootball_nfl': {
             'base': [
+                # 'team_spread_abs',
+                # 'over_win_window_3',
+                # 'over_win_window_7',
                 'team_win_ats_window_3', 
                 'team_win_ats_window_7', 
                 'team_margin_ats_abs_window_3',

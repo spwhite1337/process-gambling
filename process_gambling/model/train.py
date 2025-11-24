@@ -19,19 +19,20 @@ class Train(Wrangle):
         self.mdl = None
 
     def train(self, df: pd.DataFrame):
-        self.mdl = GridSearchCV(
-            Pipeline([
+        if self.model_params['model_type'] == 'linear_svc':
+            ppl = Pipeline([
                 ('standardscaler', StandardScaler()),
-                ('mdl', SVC(max_iter=-1, probability=True, kernel='linear'))
-            ]),
+                ('mdl', SVC(max_iter=-1, probability=True, kernel='linear', random_state=187)
+                )
+            ])
+        self.mdl = GridSearchCV(
+            ppl,
             verbose=1,
             scoring='roc_auc',
-            param_grid={
-                'mdl__C': [0.001, 0.003, 0.01, 0.03, 0.1, 0.3, 1]
-            },
+            param_grid=self.model_params['hyper_params']['param_grid'],
             cv=GroupKFold(n_splits=df['season'].nunique()),
             return_train_score=True,
-            refit=True
+            refit=True,
         )
         self.mdl.fit(df[self.features], df[self.response_col], groups=df['season'])
         df_cv = pd.DataFrame(self.mdl.cv_results_)

@@ -61,9 +61,14 @@ class Params(object):
         ]
     }
 
-    def __init__(self, sport: Optional[str] = None):
+    PULL_TYPES = ['initial', 'update', 'archive']
+
+    def __init__(self, sport: Optional[str] = None, pull_type: str = 'initial'):
         if sport is not None:
             assert sport in self.VALID_SPORTS
+        assert pull_type in self.PULL_TYPES
+
+        self.pull_type = pull_type
         self.sport = sport
         self.scores_data_source = self.SCORES_DATA_SOURCE.get(sport)
         self.odds_api_markets = self.ODDS_API_MARKETS.get(sport)

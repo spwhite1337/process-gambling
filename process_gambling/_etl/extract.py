@@ -15,8 +15,8 @@ from process_gambling.config import logger
 class Extract(ExtractionHelpersSportsRef, ExtractionHelpersOddsApi):
 
 
-    def __init__(self, sport: str):
-        super().__init__(sport=sport)
+    def __init__(self, sport: str, pull_type: str):
+        super().__init__(sport=sport, pull_type=pull_type)
         # Validate authentication for endpoints
         ## Odds-API
         r = requests.get(self.ODDS_API + '/sports', params={'apiKey': self.ODDS_API_KEY})
