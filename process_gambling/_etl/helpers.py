@@ -98,11 +98,14 @@ class ExtractionHelpersSportsRef(Params):
 class ExtractionHelpersOddsApi(object):
     ODDS_API = 'https://api.the-odds-api.com/v4'
 
-    manual_impute_event_starts = """
-    UNION SELECT '2022-12-24 19:00:00' kickoff_datetime
-    UNION SELECT '2022-12-11 21:00:00' kickoff_datetime
-    UNION SELECT '2021-12-19 21:25:00' kickoff_datetime
-    """
+    MANUAL_IMPUTE_EVENT_STARTS = {
+        'initial':  """
+        UNION SELECT '2022-12-24 19:00:00' kickoff_datetime
+        UNION SELECT '2022-12-11 21:00:00' kickoff_datetime
+        UNION SELECT '2021-12-19 21:25:00' kickoff_datetime
+        """,
+        'update': ''
+    }
 
     @staticmethod
     def _sub_n_days(dt: str, n: int = 3):
