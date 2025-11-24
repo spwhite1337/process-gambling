@@ -61,7 +61,7 @@ class Params(object):
         ]
     }
 
-    PULL_TYPES = ['initial', 'update', 'archive']
+    PULL_TYPES = ['initial', 'update', 'live', 'archive']
 
     def __init__(self, sport: Optional[str] = None, pull_type: str = 'initial'):
         if sport is not None:
@@ -69,6 +69,7 @@ class Params(object):
         assert pull_type in self.PULL_TYPES
 
         self.pull_type = pull_type
+        self.table_appendix = {'initial': '', 'update': '_UPDATE', 'live': '_LIVE', 'archive': ''}[pull_type]
         self.sport = sport
         self.scores_data_source = self.SCORES_DATA_SOURCE.get(sport)
         self.odds_api_markets = self.ODDS_API_MARKETS.get(sport)

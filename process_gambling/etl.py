@@ -30,49 +30,37 @@ class Run(Etl):
         self.transform_scores()
         self.transform_odds()
     
-    def _run_initial(self):
-        df = self.extract_sports()
-        self.upload(df, f'BRONZE_ODDSAPI_SPORTS')
+    def _run(self):
+        if self.pull_type == 'initial':
+            df = self.extract_sports()
+            self.upload(df, f'BRONZE_ODDSAPI_SPORTS')
 
-        df = self.extract_participants()
-        self.upload(df, f'BRONZE_ODDSAPI_PARTICIPANTS_{self.sport}')
+            df = self.extract_participants()
+            self.upload(df, f'BRONZE_ODDSAPI_PARTICIPANTS_{self.sport}')
 
-        df = self.generate_participants_lookup()
-        self.upload(df, f'SILVER_TEAM_LOOKUPS_{self.sport}')
+            df = self.generate_participants_lookup()
+            self.upload(df, f'SILVER_TEAM_LOOKUPS_{self.sport}')
 
         df = self.extract_scores()
-        self.upload(df, f'BRONZE_SCORES_{self.scores_data_source}_{self.sport}')
+        self.upload(df, f'BRONZE_SCORES_{self.scores_data_source}_{self.sport}{self.table_appendix}')
 
         event_starts = self.download_event_starts()
         df = self.extract_events(event_starts)
-        self.upload(df, f'BRONZE_ODDSAPI_EVENTS_{self.sport}')
+        self.upload(df, f'BRONZE_ODDSAPI_EVENTS_{self.sport}{self.table_appendix}')
 
-        df_events = self.download(f'BRONZE_ODDSAPI_EVENTS_{self.sport}')
+        df_events = self.download(f'BRONZE_ODDSAPI_EVENTS_{self.sport}{self.table_appendix}')
         df = self.extract_odds(df_events)
-        self.upload(df, f'BRONZE_ODDSAPI_HIST_ODDS_{self.sport}')
+        self.upload(df, f'BRONZE_ODDSAPI_HIST_ODDS_{self.sport}{self.table_appendix}')
 
         self.transform()
 
-    def _run_update(self):
-        df = self.extract_scores()
-        self.upload(df, f'BRONZE_SCORES_{self.scores_data_source}_{self.sport}_UPDATE')
-
-        event_starts = self.download_event_starts()
-        df = self.extract_events(event_starts)
-        self.upload(df, f'BRONZE_ODDSAPI_EVENTS_{self.sport}_UPDATE')
-
-        df_events = self.download(f'BRONZE_ODDSAPI_EVENTS_{self.sport}_UPDATE')
-        df = self.extract_odds(df_events)
-        self.upload(df, f'BRONZE_ODDSAPI_HIST_ODDS_{self.sport}_UPDATE')
-
-        self.transform()
 
     def run(self):
         if self.pull_type == 'initial':
             if not self.download_data_from_s3():
-                self._run_initial()
+                self._run()
         elif self.pull_type == 'update':
-            self._run_update()
+            self._run()
         else:
             raise NotImplementedError()
 

@@ -10,9 +10,14 @@ class Transform(Load, TransformHelpers):
     def transform_odds(self):
         logger.info('Transforming Odds')
         conn = self.connect_to_db()
-        conn.cursor().execute(f'DROP TABLE IF EXISTS SILVER_EVENT_ODDS_{self.sport};')
+        if self.pull_type in ['initial', 'update']:
+            table_name = 'SIVLER_EVENT_ODDS_{self.sport}{self.table_appendix}'
+        else:
+            raise NotImplementedError()
+
+        conn.cursor().execute(f'DROP TABLE IF EXISTS {table_name};')
         conn.cursor().execute(f"""
-        CREATE TABLE SILVER_EVENT_ODDS_{self.sport} AS
+        CREATE TABLE {table_name} AS
             -- Pivot on event-id for silver-layer
             SELECT
                 event_id,
@@ -221,7 +226,7 @@ class Transform(Load, TransformHelpers):
                     THEN outcome_point ELSE NULL END
                 ) under_total_point_draftkings_db7
 
-            FROM BRONZE_ODDSAPI_HIST_ODDS_americanfootball_nfl
+            FROM BRONZE_ODDSAPI_HIST_ODDS_{self.sport}{self.table_appendix}
             GROUP BY event_id
         """)
         self.close_db(conn)
@@ -229,10 +234,12 @@ class Transform(Load, TransformHelpers):
     def transform_scores(self):
         logger.info('Transforming Scores')
         conn = self.connect_to_db()
-        conn.cursor().execute(f'DROP TABLE IF EXISTS SILVER_EVENT_SCORES_{self.sport};')
+        if self.pull_type in ['initial', 'update']:
+            table_name = 'SILVER_EVENT_SCORES_{self.sport}{self.table_appendix}'
+        conn.cursor().execute(f'DROP TABLE IF EXISTS {table_name};')
         conn.cursor().execute(f"""
 
-        CREATE TABLE SILVER_EVENT_SCORES_{self.sport} AS
+        CREATE TABLE {table_name} AS
             SELECT DISTINCT
                 lu.event_id,
                 sc.team,
@@ -244,7 +251,7 @@ class Transform(Load, TransformHelpers):
                 opponent_score away_score,
                 overtime,
                 week_no
-            FROM BRONZE_SCORES_{self.scores_data_source}_{self.sport} sc
+            FROM BRONZE_SCORES_{self.scores_data_source}_{self.sport}{self.table_appendix} sc
             JOIN SILVER_EVENTS_LOOKUP_{self.sport} lu
               ON sc.kickoff_datetime = lu.event_start
              AND sc.season = lu.season
@@ -277,7 +284,7 @@ class Transform(Load, TransformHelpers):
                     overtime,
                     week_no,
                     MAX(sc.team) OVER(PARTITION BY lu.event_id) max_team
-                FROM BRONZE_SCORES_{self.scores_data_source}_{self.sport} sc
+                FROM BRONZE_SCORES_{self.scores_data_source}_{self.sport}{self.table_appendix} sc
                 JOIN SILVER_EVENTS_LOOKUP_{self.sport} lu
                   ON sc.kickoff_datetime = lu.event_start
                  AND sc.season = lu.season
@@ -293,12 +300,11 @@ class Transform(Load, TransformHelpers):
     def transform_events(self):
         logger.info('Transforming Events')
         conn = self.connect_to_db()
-        conn.cursor().execute(
-        f'DROP TABLE IF EXISTS SILVER_EVENTS_LOOKUP_{self.sport};'
-        )
+        if self.pull_type in ['initial', 'update']:
+            conn.cursor().execute(f'DROP TABLE IF EXISTS SILVER_EVENTS_LOOKUP_{self.sport}{self.table_appendix};')
         conn.cursor().execute(f"""
 
-        CREATE TABLE SILVER_EVENTS_LOOKUP_{self.sport} AS
+        CREATE TABLE {table_name} AS
 
         SELECT
             o.id event_id,
@@ -307,13 +313,13 @@ class Transform(Load, TransformHelpers):
             s.team,
             lu.sports_odds_name team_name,
             s.season
-        FROM BRONZE_SCORES_{self.scores_data_source}_{self.sport} s
+        FROM BRONZE_SCORES_{self.scores_data_source}_{self.sport}{self.table_appendix} s
         JOIN SILVER_TEAM_LOOKUPS_{self.sport} lu
           ON s.team = lu.sports_ref_name
           -- Use team-lookup to join Sports-ref events
           -- (defined as team, event-start)
           -- with odds-api team, event-start
-        JOIN BRONZE_ODDSAPI_EVENTS_{self.sport} o
+        JOIN BRONZE_ODDSAPI_EVENTS_{self.sport}{self.table_appendix} o
           ON STRFTIME('%Y-%m-%dT%H:%M:%SZ', s.kickoff_datetime) = o.query_date
          AND lu.sports_odds_name = o.home_team
         WHERE s.kickoff_datetime > DATE('2020-06-06')
@@ -325,10 +331,10 @@ class Transform(Load, TransformHelpers):
             s.team,
             lu.sports_odds_name team_name,
             s.season
-        FROM BRONZE_SCORES_{self.scores_data_source}_{self.sport} s
+        FROM BRONZE_SCORES_{self.scores_data_source}_{self.sport}{self.table_appendix} s
         JOIN SILVER_TEAM_LOOKUPS_{self.sport} lu
           ON s.team = lu.sports_ref_name
-        JOIN BRONZE_ODDSAPI_EVENTS_{self.sport} o
+        JOIN BRONZE_ODDSAPI_EVENTS_{self.sport}{self.table_appendix} o
           ON STRFTIME('%Y-%m-%dT%H:%M:%SZ', s.kickoff_datetime) = o.query_date
          AND lu.sports_odds_name = o.away_team
         WHERE s.kickoff_datetime > DATE('2020-06-06')
@@ -343,10 +349,10 @@ class Transform(Load, TransformHelpers):
             s.team,
             lu.alt_name_1 team_name,
             s.season
-        FROM BRONZE_SCORES_{self.scores_data_source}_{self.sport} s
+        FROM BRONZE_SCORES_{self.scores_data_source}_{self.sport}{self.table_appendix} s
         JOIN SILVER_TEAM_LOOKUPS_{self.sport} lu
           ON s.team = lu.sports_ref_name
-        JOIN BRONZE_ODDSAPI_EVENTS_{self.sport} o
+        JOIN BRONZE_ODDSAPI_EVENTS_{self.sport}{self.table_appendix} o
           ON STRFTIME('%Y-%m-%dT%H:%M:%SZ', s.kickoff_datetime) = o.query_date
          AND lu.alt_name_1 = o.away_team
         WHERE s.kickoff_datetime > DATE('2020-06-06')
@@ -358,10 +364,10 @@ class Transform(Load, TransformHelpers):
             s.team,
             lu.alt_name_1 team_name,
             s.season
-        FROM BRONZE_SCORES_{self.scores_data_source}_{self.sport} s
+        FROM BRONZE_SCORES_{self.scores_data_source}_{self.sport}{self.table_appendix} s
         JOIN SILVER_TEAM_LOOKUPS_{self.sport} lu
           ON s.team = lu.sports_ref_name
-        JOIN BRONZE_ODDSAPI_EVENTS_{self.sport} o
+        JOIN BRONZE_ODDSAPI_EVENTS_{self.sport}{self.table_appendix} o
           ON STRFTIME('%Y-%m-%dT%H:%M:%SZ', s.kickoff_datetime) = o.query_date
          AND lu.alt_name_1 = o.home_team
         WHERE s.kickoff_datetime > DATE('2020-06-06')
@@ -373,10 +379,10 @@ class Transform(Load, TransformHelpers):
             s.team,
             lu.alt_name_2 team_name,
             s.season
-        FROM BRONZE_SCORES_{self.scores_data_source}_{self.sport} s
+        FROM BRONZE_SCORES_{self.scores_data_source}_{self.sport}{self.table_appendix} s
         JOIN SILVER_TEAM_LOOKUPS_{self.sport} lu
           ON s.team = lu.sports_ref_name
-        JOIN BRONZE_ODDSAPI_EVENTS_{self.sport} o
+        JOIN BRONZE_ODDSAPI_EVENTS_{self.sport}{self.table_appendix} o
           ON STRFTIME('%Y-%m-%dT%H:%M:%SZ', s.kickoff_datetime) = o.query_date
          AND lu.alt_name_2 = o.away_team
         WHERE s.kickoff_datetime > DATE('2020-06-06')
@@ -388,10 +394,10 @@ class Transform(Load, TransformHelpers):
             s.team,
             lu.alt_name_2 team_name,
             s.season
-        FROM BRONZE_SCORES_{self.scores_data_source}_{self.sport} s
+        FROM BRONZE_SCORES_{self.scores_data_source}_{self.sport}{self.table_appendix} s
         JOIN SILVER_TEAM_LOOKUPS_{self.sport} lu
           ON s.team = lu.sports_ref_name
-        JOIN BRONZE_ODDSAPI_EVENTS_{self.sport} o
+        JOIN BRONZE_ODDSAPI_EVENTS_{self.sport}{self.table_appendix} o
           ON STRFTIME('%Y-%m-%dT%H:%M:%SZ', s.kickoff_datetime) = o.query_date
          AND lu.alt_name_2 = o.home_team
         WHERE s.kickoff_datetime > DATE('2020-06-06')
