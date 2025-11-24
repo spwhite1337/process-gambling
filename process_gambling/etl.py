@@ -52,7 +52,7 @@ class Run(Etl):
 
     def _run_update(self):
         df = self.extract_scores()
-        self.upload(df, f'BRONZE_SCORES_{self.scores_data_source}_{self.sport}')
+        self.upload(df, f'BRONZE_SCORES_{self.scores_data_source}_{self.sport}_UPDATE')
 
 
     def run(self):
@@ -77,5 +77,5 @@ if __name__ == '__main__':
     parser.add_argument('--sport', type=str)
     parser.add_argument('--pull_type', type=str)
     args = parser.parse_args()
-    run(sport=args.sport)
+    run(sport=args.sport, pull_type=args.pull_type)
 
