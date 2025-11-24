@@ -25,19 +25,36 @@ class Load(Extract, ExtractionHelpersOddsApi):
     def download_event_starts(self) -> List[str]:
         # Get event-starts for parameters in the ODDS_API
         if self.sport == 'americanfootball_nfl':
-            conn = self.connect_to_db()
             logger.info(f'Downloading Event-Starts for {self.sport}')
-            df = pd.read_sql(f"""
-                SELECT DISTINCT kickoff_datetime
-                FROM BRONZE_SCORES_{self.scores_data_source}_{self.sport}
-                -- Historical ODDS_API data starts at June 6, 2020
-                WHERE kickoff_datetime > DATE('2020-06-06')
-                -- Impute some dates manually that didn't align between systems
-                {self.manual_impute_event_starts}
-                ORDER BY kickoff_datetime
-                """, conn)
-            self.close_db(conn)
-            event_starts = df['kickoff_datetime'].to_list()
+            if self.pull_type == 'initial':
+                conn = self.connect_to_db()
+                df = pd.read_sql(f"""
+                    SELECT DISTINCT kickoff_datetime
+                    FROM BRONZE_SCORES_{self.scores_data_source}_{self.sport}
+                    -- Historical ODDS_API data starts at June 6, 2020
+                    WHERE kickoff_datetime > DATE('2020-06-06')
+                    -- Impute some dates manually that didn't align between systems
+                    {self.manual_impute_event_starts}
+                    ORDER BY kickoff_datetime
+                    """, conn)
+                self.close_db(conn)
+                event_starts = df['kickoff_datetime'].to_list()
+            elif self.pull_type == 'update':
+                conn = self.connect_to_db()
+                df = pd.read_sql(f"""
+                    SELECT DISTINCT kickoff_datetime
+                    FROM BRONZE_SCORES_{self.scores_data_source}_{self.sport}
+                    -- Historical ODDS_API data starts at June 6, 2020
+                    WHERE kickoff_datetime > DATE('2020-06-06')
+                    -- Impute some dates manually that didn't align between systems
+                    {self.manual_impute_event_starts}
+                    ORDER BY kickoff_datetime
+                    """, conn)
+                self.close_db(conn)
+                event_starts = df['kickoff_datetime'].to_list()
+            else:
+                raise NotImplementedError(self.pull_type)
+
         else:
             event_starts = []
         return event_starts
