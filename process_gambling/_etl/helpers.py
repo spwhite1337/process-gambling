@@ -83,7 +83,7 @@ class ExtractionHelpersSportsRef(Params):
     def _download_historical_sports_ref(self, start_year: int, end_year: int) -> pd.DataFrame:
         teams = [t['sports_ref_name'] for t in self.PARTICIPANTS_LOOKUP[self.sport]]
         df = []
-        logger.info(f'Downloading Historical Box Scores for {self.sport}')
+        logger.info(f'Downloading {self.pull_type} Box Scores for {self.sport}')
         for team in tqdm(teams):
             for year in range(start_year, end_year):
                 url = self.SPORTS_REF_API[self.sport]
