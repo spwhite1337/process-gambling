@@ -24,6 +24,11 @@ class Run(Etl):
             return True
         else:
             return False
+
+    def transform(self):
+        self.transform_events()
+        self.transform_scores()
+        self.transform_odds()
     
     def _run_initial(self):
         df = self.extract_sports()
@@ -46,14 +51,21 @@ class Run(Etl):
         df = self.extract_odds(df_events)
         self.upload(df, f'BRONZE_ODDSAPI_HIST_ODDS_{self.sport}')
 
-        self.transform_events()
-        self.transform_scores()
-        self.transform_odds()
+        self.transform()
 
     def _run_update(self):
         df = self.extract_scores()
         self.upload(df, f'BRONZE_SCORES_{self.scores_data_source}_{self.sport}_UPDATE')
 
+        event_starts = self.download_event_starts()
+        df = self.extract_events(event_starts)
+        self.upload(df, f'BRONZE_ODDSAPI_EVENTS_{self.sport}_UPDATE')
+
+        df_events = self.download(f'BRONZE_ODDSAPI_EVENTS_{self.sport}_UPDATE')
+        df = self.extract_odds(df_events)
+        self.upload(df, f'BRONZE_ODDSAPI_HIST_ODDS_{self.sport}_UPDATE')
+
+        self.transform()
 
     def run(self):
         if self.pull_type == 'initial':
