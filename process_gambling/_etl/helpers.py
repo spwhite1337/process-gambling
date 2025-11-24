@@ -80,12 +80,12 @@ class ExtractionHelpersSportsRef(Params):
             df['kickoff_timezone'] = 'UTC'
             return df
 
-    def _download_historical_sports_ref(self) -> pd.DataFrame:
+    def _download_historical_sports_ref(self, start_year: int, end_year: int) -> pd.DataFrame:
         teams = [t['sports_ref_name'] for t in self.PARTICIPANTS_LOOKUP[self.sport]]
         df = []
         logger.info(f'Downloading Historical Box Scores for {self.sport}')
         for team in tqdm(teams):
-            for year in range(self.START_YEAR[self.sport], datetime.datetime.now().year):
+            for year in range(start_year, end_year):
                 url = self.SPORTS_REF_API[self.sport]
                 df_ = pd.read_html(f'{url}/teams/{team}/{year}.htm')
                 df.append(df_[1].assign(year=year, team=team))

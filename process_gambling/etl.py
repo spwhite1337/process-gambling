@@ -27,28 +27,32 @@ class Run(Etl):
     
     def _run_initial(self):
         df = self.extract_sports()
-        api.upload(df, f'BRONZE_ODDSAPI_SPORTS')
+        self.upload(df, f'BRONZE_ODDSAPI_SPORTS')
 
-        df = api.extract_participants()
-        api.upload(df, f'BRONZE_ODDSAPI_PARTICIPANTS_{api.sport}')
+        df = self.extract_participants()
+        self.upload(df, f'BRONZE_ODDSAPI_PARTICIPANTS_{self.sport}')
 
-        df = api.generate_participants_lookup()
-        api.upload(df, f'SILVER_TEAM_LOOKUPS_{api.sport}')
+        df = self.generate_participants_lookup()
+        self.upload(df, f'SILVER_TEAM_LOOKUPS_{self.sport}')
 
-        df = api.extract_scores()
-        api.upload(df, f'BRONZE_SCORES_{api.scores_data_source}_{api.sport}')
+        df = self.extract_scores()
+        self.upload(df, f'BRONZE_SCORES_{self.scores_data_source}_{self.sport}')
 
-        event_starts = api.download_event_starts()
-        df = api.extract_events(event_starts)
-        api.upload(df, f'BRONZE_ODDSAPI_EVENTS_{api.sport}')
+        event_starts = self.download_event_starts()
+        df = self.extract_events(event_starts)
+        self.upload(df, f'BRONZE_ODDSAPI_EVENTS_{self.sport}')
 
-        df_events = api.download(f'BRONZE_ODDSAPI_EVENTS_{api.sport}')
-        df = api.extract_odds(df_events)
-        api.upload(df, f'BRONZE_ODDSAPI_HIST_ODDS_{api.sport}')
+        df_events = self.download(f'BRONZE_ODDSAPI_EVENTS_{self.sport}')
+        df = self.extract_odds(df_events)
+        self.upload(df, f'BRONZE_ODDSAPI_HIST_ODDS_{self.sport}')
 
-        api.transform_events()
-        api.transform_scores()
-        api.transform_odds()
+        self.transform_events()
+        self.transform_scores()
+        self.transform_odds()
+
+    def _run_update(self):
+        df = self.extract_scores()
+        self.upload(df, f'BRONZE_SCORES_{self.scores_data_source}_{self.sport}')
 
 
     def run(self):
@@ -56,6 +60,10 @@ class Run(Etl):
             if self.download_data_from_s3():
                 return
             self._run_initial()
+        elif self.pull_type == 'update':
+            self._run_update()
+        else:
+            raise NotImplementedError()
 
 
 def run(sport: str, pull_type: str = 'initial'):
