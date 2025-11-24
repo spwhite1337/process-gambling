@@ -90,6 +90,9 @@ class Extract(ExtractionHelpersSportsRef, ExtractionHelpersOddsApi):
                 }
             )
             # If it returns nothing, expand the window to 100 minutes
+            if 'data' not in r.json():
+                raise Exception(r.json())
+            
             if len(r.json()['data']) == 0:
                 commenceTimeFrom = 'T'.join(str(datetime.datetime.strptime(event_start, '%Y-%m-%d %H:%M:%S') - datetime.timedelta(minutes=100)).split(' ')) + 'Z'
                 commenceTimeTo = 'T'.join(str(datetime.datetime.strptime(event_start, '%Y-%m-%d %H:%M:%S') + datetime.timedelta(minutes=100)).split(' ')) + 'Z'
