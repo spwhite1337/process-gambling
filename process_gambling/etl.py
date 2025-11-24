@@ -57,9 +57,8 @@ class Run(Etl):
 
     def run(self):
         if self.pull_type == 'initial':
-            if self.download_data_from_s3():
-                return
-            self._run_initial()
+            if not self.download_data_from_s3():
+                self._run_initial()
         elif self.pull_type == 'update':
             self._run_update()
         else:
