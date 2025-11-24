@@ -300,8 +300,14 @@ class Transform(Load, TransformHelpers):
     def transform_events(self):
         logger.info('Transforming Events')
         conn = self.connect_to_db()
+
         if self.pull_type in ['initial', 'update']:
-            conn.cursor().execute(f'DROP TABLE IF EXISTS SILVER_EVENTS_LOOKUP_{self.sport}{self.table_appendix};')
+            table_name = 'SILVER_EVENTS_LOOKUP_{self.sport}{self.table_appendix}'
+            manual_imputes_events = self.MANUAL_IMPUTES_EVENTS[self.pull_type]
+        else:
+            raise NotImplementedError(self.pull_type)
+
+        conn.cursor().execute(f'DROP TABLE IF EXISTS {table_name};')
         conn.cursor().execute(f"""
 
         CREATE TABLE {table_name} AS
@@ -405,7 +411,7 @@ class Transform(Load, TransformHelpers):
         -- Manually input because some kickoff-dates in sports-ref
         -- Are far from those documented in the ODDs api
         -- Looks like Sports-ref is correct...
-        {self.manual_imputes_events}
+        {manual_imputes_events}
         ;
         """
         )

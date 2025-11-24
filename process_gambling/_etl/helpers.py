@@ -169,7 +169,8 @@ class ExtractionHelpersOddsApi(object):
 
 class TransformHelpers(object):
 
-    manual_imputes_events = """
+    MANUAL_IMPUTES_EVENTS = {
+        'initial': """
         UNION
         SELECT
             '81c8578ea74ac6db74ba12d9f694e9e2' event_id,
@@ -384,4 +385,7 @@ class TransformHelpers(object):
             'Green Bay Packers' team_name,
             2021 season
 
-    """
+        """,
+        'update': '',
+    }
+
