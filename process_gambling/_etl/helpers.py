@@ -91,7 +91,7 @@ class ExtractionHelpersSportsRef(Params):
                 df.append(df_[1].assign(year=year, team=team))
                 # To avoid 429 errors, wait between pulls
                 # https://www.sports-reference.com/bot-traffic.html
-                time.sleep(30)
+                time.sleep(10)
         return pd.concat(df)
 
 
