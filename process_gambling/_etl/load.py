@@ -27,6 +27,7 @@ class Load(Extract, ExtractionHelpersOddsApi):
         if self.sport == 'americanfootball_nfl':
             logger.info(f'Downloading Event-Starts for {self.sport}')
             if self.pull_type in ['initial', 'update']:
+                manual_impute_event_starts = self.MANUAL_IMPUTE_EVENT_STARTS[self.pull_type]
                 conn = self.connect_to_db()
                 df = pd.read_sql(f"""
                     SELECT DISTINCT kickoff_datetime
@@ -34,7 +35,7 @@ class Load(Extract, ExtractionHelpersOddsApi):
                     -- Historical ODDS_API data starts at June 6, 2020
                     WHERE kickoff_datetime > DATE('2020-06-06')
                     -- Impute some dates manually that didn't align between systems
-                    {self.manual_impute_event_starts}
+                    {manual_impute_event_starts}
                     ORDER BY kickoff_datetime
                     """, conn)
                 self.close_db(conn)
