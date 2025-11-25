@@ -11,10 +11,10 @@ class Params(Load):
                 'model_type': 'linear_svc',
                 'hyper_params': {
                     'param_grid': {
-                        'mdl__C': [0.003, 0.01, 0.03, 0.1, 0.3]
+                        'mdl__C': [0.001, 0.003, 0.01, 0.03, 0.1, 0.3]
                     }
                 },
-                'response_col': 'team_win_ats',
+                'response_col': 'team_margin_ats_close',
                 'val_year': 2024
             }
         }

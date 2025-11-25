@@ -35,7 +35,8 @@ SELECT
     under_points,
     under_price,
     over_points - (team_score + opponent_score) over_margin,
-    ABS(over_points - (team_score + opponent_score)) over_margin_abs
+    ABS(over_points - (team_score + opponent_score)) over_margin_abs,
+    ABS( (team_score + team_spread) - opponent_score ) < 4 team_margin_ats_close
 FROM (
     -- Convert from home / away to team / opponent
     SELECT
@@ -100,6 +101,8 @@ FROM (
 WHERE week_no NOT IN ('Wild Card', 'Division', 'Conf. Champ.', 'SuperBowl')
 ORDER BY event_start, event_id, team_name
             """,
+
+
             'update': """
 SELECT
     event_id,
@@ -134,7 +137,7 @@ SELECT
     under_price,
     over_points - (team_score + opponent_score) over_margin,
     ABS(over_points - (team_score + opponent_score)) over_margin_abs,
-    ABS( (team_score + team_spread) - opponent_score ) < 8 team_margin_ats_close
+    ABS( (team_score + team_spread) - opponent_score ) < 4 team_margin_ats_close
 FROM (
     -- Convert from home / away to team / opponent
     SELECT
@@ -233,7 +236,7 @@ SELECT
     under_price,
     over_points - (team_score + opponent_score) over_margin,
     ABS(over_points - (team_score + opponent_score)) over_margin_abs,
-    ABS( (team_score + team_spread) - opponent_score ) < 8 team_margin_ats_close
+    ABS( (team_score + team_spread) - opponent_score ) < 4 team_margin_ats_close
 
 FROM (
     -- Convert from home / away to team / opponent
