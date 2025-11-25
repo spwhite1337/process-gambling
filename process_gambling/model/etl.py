@@ -51,8 +51,7 @@ class Etl(Params):
         df = self._transform_extraction(df)
         return df
 
-    @staticmethod
-    def save_model():
+    def save_model(self):
         model_fp = os.path.join(os.getcwd(), 'cache', f'model_{MODEL_VERSION}.pkl')
         if not os.path.exists(os.path.dirname(model_fp)):
             os.makedirs(os.path.dirname(model_fp))
@@ -82,6 +81,17 @@ class Etl(Params):
         )
         print(f'Downloaded Model: {MODEL_VERSION}')
 
-    def upload_model(self):
-        pass
+    @staticmethod
+    def upload_model():
+        model_fp = os.path.join(os.getcwd(), 'cache', f'model_{MODEL_VERSION}.pkl')
+        if not os.path.exists(model_fp):
+            raise FileNotFoundError(model_fp)
+
+        boto3.client('s3').\
+                upload_file(
+                    Filename=model_fp,
+                    Bucket=BUCKET_NAME,
+                    Key=f'code/process_gambling/model/model_{MODEL_VERSION}.pkl'
+                )    
+        print(f'Uploading Model {model_fp} to S3')
 
