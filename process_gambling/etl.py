@@ -52,7 +52,7 @@ class Run(Etl):
         # df = self.extract_odds(df_events)
         # self.upload(df, f'BRONZE_ODDSAPI_HIST_ODDS_{self.sport}{self.table_appendix}')
 
-        self.transform()
+        # self.transform()
 
 
     def run(self):

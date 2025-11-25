@@ -1,6 +1,7 @@
 from typing import Optional
 
 import os
+import boto3
 import sqlite3
 import requests
 
@@ -8,7 +9,6 @@ from process_gambling.config import logger
 
 
 class Params(object):
-    ODDS_API_KEY = os.environ.get('ODDS_API_KEY')
     DB_NAME = 'process_gambling'
     DB_VERSION = 'v1'
     VALID_SPORTS = [
@@ -74,6 +74,15 @@ class Params(object):
         self.scores_data_source = self.SCORES_DATA_SOURCE.get(sport)
         self.odds_api_markets = self.ODDS_API_MARKETS.get(sport)
         self.odds_api_bookmakers = self.ODDS_API_BOOKMAKERS.get(sport)
+
+        try: 
+            r = boto3.session.Session().\
+                    client(service_name='secretsmanager', region_name='us-east-2').\
+                    get_secret_value(SecretId='odds-api')['SecretString']
+            self.ODDS_API_KEY = r['ODDS_API_KEY']
+        except Exception as err:
+            print('Authenication to ODDS API Failed')
+
 
     def connect_to_db(self):
         """
