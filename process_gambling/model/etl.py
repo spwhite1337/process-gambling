@@ -49,3 +49,10 @@ class Etl(Params):
         df = self._transform_extraction(df)
         return df
 
+    def save_model(self):
+        pass
+
+    def load_model(self):
+        pass
+
+
