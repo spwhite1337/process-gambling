@@ -53,5 +53,6 @@ class Load(Extract, ExtractionHelpersOddsApi):
     @staticmethod
     def save_to_s3(filename: str, object_name: str):
         client = boto3.client('s3')
+        print(f'Saving {filename} to {object_name}')
         client.upload_file(filename, 'scott-p-white', object_name)
 

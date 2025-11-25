@@ -252,7 +252,7 @@ class Transform(Load, TransformHelpers):
                 overtime,
                 week_no
             FROM BRONZE_SCORES_{self.scores_data_source}_{self.sport}{self.table_appendix} sc
-            JOIN SILVER_EVENTS_LOOKUP_{self.sport} lu
+            JOIN SILVER_EVENTS_LOOKUP_{self.sport}{self.table_appendix} lu
               ON sc.kickoff_datetime = lu.event_start
              AND sc.season = lu.season
              AND sc.team = lu.team
@@ -285,7 +285,7 @@ class Transform(Load, TransformHelpers):
                     week_no,
                     MAX(sc.team) OVER(PARTITION BY lu.event_id) max_team
                 FROM BRONZE_SCORES_{self.scores_data_source}_{self.sport}{self.table_appendix} sc
-                JOIN SILVER_EVENTS_LOOKUP_{self.sport} lu
+                JOIN SILVER_EVENTS_LOOKUP_{self.sport}{self.table_appendix} lu
                   ON sc.kickoff_datetime = lu.event_start
                  AND sc.season = lu.season
                  AND sc.team = lu.team

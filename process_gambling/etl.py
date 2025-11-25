@@ -67,7 +67,7 @@ class Run(Etl):
 
 def run(sport: str, pull_type: str = 'initial', archive: bool = False):
     api = Run(sport=sport, pull_type=pull_type)
-    # api.run()
+    api.run()
 
     if archive:
         api.save_to_s3(
