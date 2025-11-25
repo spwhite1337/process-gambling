@@ -1,11 +1,13 @@
 import os
+import boto3
+import pickle
 import pandas as pd
 
 from process_gambling.model.params import Params
 from process_gambling.etl import run as run_etl
 from process_gambling.utils.utils import run_query
 from process_gambling.utils.queries import queries
-from process_gambling import DATA_VERSION
+from process_gambling import DATA_VERSION, MODEL_VERSION, BUCKET_NAME
 
 
 class Etl(Params):
@@ -49,10 +51,37 @@ class Etl(Params):
         df = self._transform_extraction(df)
         return df
 
-    def save_model(self):
-        pass
+    @staticmethod
+    def save_model():
+        model_fp = os.path.join(os.getcwd(), 'cache', f'model_{MODEL_VERSION}.pkl')
+        if not os.path.exists(os.path.dirname(model_fp)):
+            os.makedirs(os.path.dirname(model_fp))
+        print(f'Saving Model: {MODEL_VERSION}')
+        with open(model_fp, 'wb') as fp:
+            pickle.dump(self, fp)
 
-    def load_model(self):
-        pass
+    @staticmethod
+    def load_model():
+        model_fp = os.path.join(os.getcwd(), 'cache', f'model_{MODEL_VERSION}.pkl')
+        if not os.path.exists(model_fp):
+            raise FileNotFoundError(model_fp)
+        with open(model_fp, 'rb') as jp:
+            out = pickle.load(jp)
+        return out
 
+    def download_model(self):
+        cache_dir = os.path.join(os.getcwd(), 'cache')
+        if not os.path.exists(cache_dir):
+            os.makedirs(cache_dir)
+
+        client = boto3.client('s3')
+        client.download_file(
+            BUCKET_NAME,
+            f'code/process_gambling/model/model_{MODEL_VERSION}.pkl',
+            os.path.join(cache_dir, f'model_{MODEL_VERSION}.pkl')
+        )
+        print(f'Downloaded Model: {MODEL_VERSION}')
+
+    def upload_model(self):
+        pass
 

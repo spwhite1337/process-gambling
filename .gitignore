@@ -164,4 +164,5 @@ selenium-debug.log
 *security_backend.py
 
 data/
+*.pkl
 *.db
