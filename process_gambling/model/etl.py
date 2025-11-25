@@ -17,8 +17,8 @@ class Etl(Params):
         df = run_query(query)
         return df
 
-    def _extract_update(self) -> pd.DataFrame:
-        query = queries[self.sport]['update']
+    def _extract_update(self) -> pd.DataFrame: 
+        query = f'SELECT * FROM GOLD_CURATE_TEAM_EVENTS_UPDATE_{DATA_VERSION}'
         df = run_query(query)
         return df
 
