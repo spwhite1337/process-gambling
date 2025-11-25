@@ -23,7 +23,6 @@ class Etl(Params):
             'over_win', 
             'over_margin_abs'
         ]
-        print(df.shape)
         dfs = []
         for team_name, df__ in df.groupby('team'):
             for n_games in n_gamess:
@@ -32,7 +31,6 @@ class Etl(Params):
                     df__[f'{metric}_window_{n_games}'] = df__[metric].shift().rolling(n_games).mean()
             dfs.append(df__)
         df = pd.concat(dfs)
-        print(df.shape)
         # Get one record for an event, defined as the home-team
         df_ = df[df['is_home'] == 1]
         df_opp = df[df['is_home'] == 0].\
