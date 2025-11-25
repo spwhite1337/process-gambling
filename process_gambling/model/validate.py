@@ -19,11 +19,14 @@ class Validate(Train):
         })
 
         # Define perecentiles based on val-set
-        ptiles = np.percentile(df_val['preds'].values, np.arange(0, 100, 11))
+        if self.ptiles is None:
+            self.ptiles = np.percentile(df_val['preds'].values, np.arange(0, 100, 11))
 
-        for th in np.linspace(val_preds.min(), val_preds.max(), 10):
+        for th in self.ptiles:
             wins = (1-df_val[df_val['preds'] <= th]['trues']).sum()
             losses = (df_val[df_val['preds'] <= th]['trues']).sum()
+            if wins+losses == 0:
+                continue
             pvalue = binomtest(wins, wins+losses, 0.5).pvalue
             print(f'th: {round(th, 3)}, {wins}, {losses}, {round(wins/(wins+losses), 3)}, pvalue: {round(pvalue, 2)}')
 

@@ -18,6 +18,7 @@ class Train(Wrangle):
     def __init(self, sport: str = 'americanfootball_nfl', version: str = 'v0'):
         super().__init__(sport=sport, version=version)
         self.mdl = None
+        self.ptiles = None
 
     def train(self, df: pd.DataFrame):
         if self.model_params['model_type'] == 'linear_svc':
@@ -39,4 +40,4 @@ class Train(Wrangle):
         df_cv = pd.DataFrame(self.mdl.cv_results_)
         df_cv['params'] = df_cv['params'].astype(str)
         self.upload(df_cv, f'GOLD_CV_RESULTS_MODEL_{MODEL_VERSION}')
-        
+        self.ptiles = None
