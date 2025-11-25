@@ -17,6 +17,11 @@ class Etl(Params):
         df = run_query(query)
         return df
 
+    def _extract_update(self) -> pd.DataFrame:
+        query = queries[self.sport]['update']
+        df = run_query(query)
+        return df
+
     def _transform_extraction(self, df: pd.DataFrame) -> pd.DataFrame:
         n_gamess, metrics = [3, 5, 7], [
             'team_win',
@@ -46,9 +51,16 @@ class Etl(Params):
         df_ = df_.merge(df_opp[['event_id', 'opponent'] + subset_cols], on=['event_id', 'opponent'])
         return df_
 
-    def download(self) -> pd.DataFrame:
+    def download_train(self) -> pd.DataFrame:
         df = self._extract()
         df = self._transform_extraction(df)
+        return df
+
+    def download_update(self) -> pd.DataFrame:
+        df = self._extract_update()
+        df = self._transform_extraction(df)
+        # Only keep current season
+        df = df[df['season'] == df['season'].max()]
         return df
 
     def save_model(self):

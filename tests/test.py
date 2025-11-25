@@ -6,14 +6,28 @@ class Tests(unittest.TestCase):
         import boto3
         client = boto3.client('s3')
 
-    def test_model(self):
+    def test_train_model(self):
         from process_gambling.model import Model
-        mdl = Model(sport='americanfootball_nfl', version='v0')
-        df = mdl.download()
+        from process_gambling import MODEL_VERSION
+        mdl = Model(sport='americanfootball_nfl', version=MODEL_VERSION)
+        df = mdl.download_train()
         df_train, df_test = mdl.fit_transform(df)
-        mdl = mdl.load_model()
-        # mdl.train(df_train)
+        mdl.train(df_train)
         mdl.validate(df_test)
-        mdl.save_model()
-        mdl.upload_model()
+
+    def test_load_model(self):
+        from process_gambling.model import Model
+        from process_gambling import MODEL_VERSION
+        mdl = Model(sport='americanfootball_nfl', version=MODEL_VERSION)
+        df = mdl.download_train()
+        _, df_test = mdl.fit_transform(df)
+        mdl = mdl.load_model()
+        mdl.validate(df_test)
+
+    def test_update_preds(self):
+        from process_gambling.model import Model
+        from process_gambling import MODEL_VERSION
+        mdl = Model(sport='americanfootball_nfl', version=MODEL_VERSION)
+        df = mdl.download_update()
+        print(df.shape)
 
