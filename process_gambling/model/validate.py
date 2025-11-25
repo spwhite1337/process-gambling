@@ -18,6 +18,9 @@ class Validate(Train):
             'preds': val_preds
         })
 
+        # Define perecentiles based on val-set
+        ptiles = np.percentile(df_val['preds'].values, np.arange(0, 100, 11))
+
         for th in np.linspace(val_preds.min(), val_preds.max(), 10):
             wins = (1-df_val[df_val['preds'] <= th]['trues']).sum()
             losses = (df_val[df_val['preds'] <= th]['trues']).sum()

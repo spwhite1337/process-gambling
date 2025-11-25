@@ -13,6 +13,7 @@ class Tests(unittest.TestCase):
         df_train, df_test = mdl.fit_transform(df)
         mdl.train(df_train)
         mdl.validate(df_test)
+        # mdl.upload_model()
 
     def test_load_model(self):
         from process_gambling.model import Model

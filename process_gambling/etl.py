@@ -79,18 +79,18 @@ class Run(Etl):
             df = self.generate_participants_lookup()
             self.upload(df, f'SILVER_TEAM_LOOKUPS_{self.sport}')
 
-        # df = self.extract_scores()
-        # self.upload(df, f'BRONZE_SCORES_{self.scores_data_source}_{self.sport}{self.table_appendix}')
+        df = self.extract_scores()
+        self.upload(df, f'BRONZE_SCORES_{self.scores_data_source}_{self.sport}{self.table_appendix}')
 
-        # event_starts = self.download_event_starts()
-        # df = self.extract_events(event_starts)
-        # self.upload(df, f'BRONZE_ODDSAPI_EVENTS_{self.sport}{self.table_appendix}')
+        event_starts = self.download_event_starts()
+        df = self.extract_events(event_starts)
+        self.upload(df, f'BRONZE_ODDSAPI_EVENTS_{self.sport}{self.table_appendix}')
 
-        # df_events = self.download(f'BRONZE_ODDSAPI_EVENTS_{self.sport}{self.table_appendix}')
-        # df = self.extract_odds(df_events)
-        # self.upload(df, f'BRONZE_ODDSAPI_HIST_ODDS_{self.sport}{self.table_appendix}')
+        df_events = self.download(f'BRONZE_ODDSAPI_EVENTS_{self.sport}{self.table_appendix}')
+        df = self.extract_odds(df_events)
+        self.upload(df, f'BRONZE_ODDSAPI_HIST_ODDS_{self.sport}{self.table_appendix}')
 
-        # self.transform()
+        self.transform()
 
         self.curate()
 
