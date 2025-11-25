@@ -13,7 +13,7 @@ from process_gambling import DATA_VERSION, MODEL_VERSION, BUCKET_NAME
 class Etl(Params):
 
     def _extract(self) -> pd.DataFrame: 
-        query = queries[self.sport]['training']
+        query = f'SELECT * FROM GOLD_CURATED_TEAM_EVENTS_{DATA_VERSION}'
         df = run_query(query)
         return df
 
