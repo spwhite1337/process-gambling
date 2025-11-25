@@ -17,6 +17,7 @@ class Validate(Train):
             'trues': val_trues,
             'preds': val_preds
         })
+
         for th in np.linspace(val_preds.min(), val_preds.max(), 10):
             wins = (1-df_val[df_val['preds'] <= th]['trues']).sum()
             losses = (df_val[df_val['preds'] <= th]['trues']).sum()

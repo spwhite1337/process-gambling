@@ -1,5 +1,7 @@
 import os
 import boto3
+import pandas as pd
+
 from process_gambling._etl import Etl
 from process_gambling.utils.utils import _data_exists_in_s3, run_query
 from process_gambling.utils.queries import queries
@@ -35,6 +37,36 @@ class Run(Etl):
         query = queries[self.sport]['curate'][self.pull_type]
         df = run_query(query)
         self.upload(df, f'GOLD_CURATE_TEAM_EVENTS{self.table_appendix}_{DATA_VERSION}')
+        
+        # Rolling windows and aggregate to EVENTS
+        n_gamess, metrics = [3, 5, 7], [
+            'team_win',
+            'team_win_ats', 
+            'team_margin_ats_abs', 
+            'over_win', 
+            'over_margin_abs'
+        ]
+        df_tmp = []
+        for team_name, df__ in df.groupby('team'):
+            for n_games in n_gamess:
+                for metric in metrics:
+                    df__[f'{metric}_window_{n_games}'] = df__[metric].shift().rolling(n_games).mean()
+            df_tmp.append(df__)
+        df_in = pd.concat(df_tmp)
+
+        # Get one record for an event, defined as the home-team
+        df = df_in[df_in['is_home'] == 1]
+        df_opp = df_in[df_in['is_home'] == 0].\
+            drop('opponent', axis=1).rename(columns={'team_name': 'opponent'})
+        subset_cols = []
+        for n_games in n_gamess:
+            for metric in metrics:
+                col = f'{metric}_window_{n_games}'
+                df_opp = df_opp.rename(columns={col: 'opponent_' + col})
+                subset_cols.append('opponent_' + col)
+        df = df.merge(df_opp[['event_id', 'opponent'] + subset_cols], on=['event_id', 'opponent'])
+        self.upload(df, f'GOLD_CURATE_EVENTS{self.table_appendix}_{DATA_VERSION}')
+        return df
     
     def _run(self):
         if self.pull_type == 'initial':
