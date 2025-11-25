@@ -1,8 +1,9 @@
+from process_gambling._etl.load import Load
 
 
 
 
-class Params(object):
+class Params(Load):
     MODEL_PARAMS = {
         'americanfootball_nfl': {
             'v0': {

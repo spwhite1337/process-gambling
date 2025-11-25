@@ -10,6 +10,7 @@ from sklearn.model_selection import GridSearchCV
 from sklearn.model_selection import GroupKFold
 
 from process_gambling.model.wrangle import Wrangle
+from process_gambling import MODEL_VERSION
 
 
 class Train(Wrangle):
@@ -36,5 +37,6 @@ class Train(Wrangle):
         )
         self.mdl.fit(df[self.features], df[self.response_col], groups=df['season'])
         df_cv = pd.DataFrame(self.mdl.cv_results_)
-        print(df_cv)
-
+        df_cv['params'] = df_cv['params'].astype(str)
+        self.upload(df_cv, f'GOLD_CV_RESULTS_MODEL_{MODEL_VERSION}')
+        

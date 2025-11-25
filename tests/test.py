@@ -20,11 +20,11 @@ class Tests(unittest.TestCase):
         df = mdl.download_train()
         _, df_test = mdl.fit_transform(df)
         mdl = mdl.load_model()
-        mdl.validate(df_test)
+        mdl.validate(df_test, 'GOLD_VAL_PREDS_v0')
 
     def test_update_preds(self):
         from process_gambling.model import Model
         mdl = Model(sport='americanfootball_nfl', version='v0').load_model()
         df = mdl.download_update()
-        mdl.validate(df)
+        mdl.validate(df, 'GOLD_UPDATE_PREDS_v0')
 
