@@ -69,6 +69,9 @@ class Etl(Params):
         return out
 
     def download_model(self):
+        if not boto3.client('s3').head_object(Bucket=BUCKET_NAME, Key=f'code/process_gambling/model/model_{MODEL_VERSION}.pkl'):
+            raise FileNotFoundError(f'model_{MODEL_VERSION}.pkl')
+
         cache_dir = os.path.join(os.getcwd(), 'cache')
         if not os.path.exists(cache_dir):
             os.makedirs(cache_dir)
