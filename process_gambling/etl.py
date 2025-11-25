@@ -44,13 +44,13 @@ class Run(Etl):
         # df = self.extract_scores()
         # self.upload(df, f'BRONZE_SCORES_{self.scores_data_source}_{self.sport}{self.table_appendix}')
 
-        event_starts = self.download_event_starts()
-        df = self.extract_events(event_starts)
-        self.upload(df, f'BRONZE_ODDSAPI_EVENTS_{self.sport}{self.table_appendix}')
+        # event_starts = self.download_event_starts()
+        # df = self.extract_events(event_starts)
+        # self.upload(df, f'BRONZE_ODDSAPI_EVENTS_{self.sport}{self.table_appendix}')
 
-        df_events = self.download(f'BRONZE_ODDSAPI_EVENTS_{self.sport}{self.table_appendix}')
-        df = self.extract_odds(df_events)
-        self.upload(df, f'BRONZE_ODDSAPI_HIST_ODDS_{self.sport}{self.table_appendix}')
+        # df_events = self.download(f'BRONZE_ODDSAPI_EVENTS_{self.sport}{self.table_appendix}')
+        # df = self.extract_odds(df_events)
+        # self.upload(df, f'BRONZE_ODDSAPI_HIST_ODDS_{self.sport}{self.table_appendix}')
 
         self.transform()
 
@@ -65,9 +65,15 @@ class Run(Etl):
             raise NotImplementedError()
 
 
-def run(sport: str, pull_type: str = 'initial'):
+def run(sport: str, pull_type: str = 'initial', archive: bool = False):
     api = Run(sport=sport, pull_type=pull_type)
-    api.run()
+    # api.run()
+
+    if archive:
+        api.save_to_s3(
+                os.path.join(os.getcwd(), 'cache', f'process_gambling_{DATA_VERSION}.db'),
+                f'code/process_gambling/data/process_gambling_{DATA_VERSION}.db'
+            )
 
 
 if __name__ == '__main__':
@@ -75,6 +81,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--sport', type=str)
     parser.add_argument('--pull_type', type=str)
+    parser.add_argument('--archive', action='store_true')
     args = parser.parse_args()
-    run(sport=args.sport, pull_type=args.pull_type)
+    run(sport=args.sport, pull_type=args.pull_type, archive=args.archive)
 

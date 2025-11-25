@@ -11,7 +11,7 @@ class Transform(Load, TransformHelpers):
         logger.info('Transforming Odds')
         conn = self.connect_to_db()
         if self.pull_type in ['initial', 'update']:
-            table_name = 'SIVLER_EVENT_ODDS_{self.sport}{self.table_appendix}'
+            table_name = f'SILVER_EVENT_ODDS_{self.sport}{self.table_appendix}'
         else:
             raise NotImplementedError()
 
@@ -235,7 +235,7 @@ class Transform(Load, TransformHelpers):
         logger.info('Transforming Scores')
         conn = self.connect_to_db()
         if self.pull_type in ['initial', 'update']:
-            table_name = 'SILVER_EVENT_SCORES_{self.sport}{self.table_appendix}'
+            table_name = f'SILVER_EVENT_SCORES_{self.sport}{self.table_appendix}'
         conn.cursor().execute(f'DROP TABLE IF EXISTS {table_name};')
         conn.cursor().execute(f"""
 
@@ -302,7 +302,7 @@ class Transform(Load, TransformHelpers):
         conn = self.connect_to_db()
 
         if self.pull_type in ['initial', 'update']:
-            table_name = 'SILVER_EVENTS_LOOKUP_{self.sport}{self.table_appendix}'
+            table_name = f'SILVER_EVENTS_LOOKUP_{self.sport}{self.table_appendix}'
             manual_imputes_events = self.MANUAL_IMPUTES_EVENTS[self.pull_type]
         else:
             raise NotImplementedError(self.pull_type)
