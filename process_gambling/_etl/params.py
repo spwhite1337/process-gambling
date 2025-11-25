@@ -1,6 +1,7 @@
 from typing import Optional
 
 import os
+import ast
 import boto3
 import sqlite3
 import requests
@@ -79,8 +80,10 @@ class Params(object):
             r = boto3.session.Session().\
                     client(service_name='secretsmanager', region_name='us-east-2').\
                     get_secret_value(SecretId='odds-api')['SecretString']
+            r = ast.literal_eval(r)
             self.ODDS_API_KEY = r['ODDS_API_KEY']
         except Exception as err:
+            self.OODS_API_KEY = None
             print('Authenication to ODDS API Failed')
 
 

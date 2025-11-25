@@ -1,7 +1,8 @@
 import os
 import boto3
 from process_gambling._etl import Etl
-from process_gambling.utils.utils import _data_exists_in_s3
+from process_gambling.utils.utils import _data_exists_in_s3, run_query
+from process_gambling.utils.queries import queries
 from process_gambling import DATA_VERSION
 
 
@@ -29,6 +30,11 @@ class Run(Etl):
         self.transform_events()
         self.transform_scores()
         self.transform_odds()
+
+    def curate(self):
+        query = queries[self.sport]['curate'][self.pull_type]
+        df = run_query(query)
+        self.upload(df, f'GOLD_CURATE_TEAM_EVENTS{self.table_appendix}_{DATA_VERSION}')
     
     def _run(self):
         if self.pull_type == 'initial':
@@ -53,6 +59,8 @@ class Run(Etl):
         # self.upload(df, f'BRONZE_ODDSAPI_HIST_ODDS_{self.sport}{self.table_appendix}')
 
         # self.transform()
+
+        self.curate()
 
 
     def run(self):

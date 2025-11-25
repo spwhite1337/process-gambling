@@ -1,7 +1,8 @@
 
 queries = {
     'americanfootball_nfl': {
-        'training': """
+        'curate': {
+            'initial': """
 SELECT
     event_id,
     team,
@@ -98,8 +99,8 @@ FROM (
 )
 WHERE week_no NOT IN ('Wild Card', 'Division', 'Conf. Champ.', 'SuperBowl')
 ORDER BY event_start, event_id, team_name
-        """,
-        'update': """
+            """,
+            'update': """
 SELECT
     event_id,
     team,
@@ -300,5 +301,6 @@ WHERE week_no NOT IN ('Wild Card', 'Division', 'Conf. Champ.', 'SuperBowl')
   AND season = (SELECT MAX(season) FROM SILVER_EVENTS_LOOKUP_americanfootball_nfl_UPDATE) - 1
 ORDER BY event_start, event_id, team_name
         """
+        }
     }
 }
