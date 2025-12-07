@@ -36,7 +36,10 @@ SELECT
     under_price,
     over_points - (team_score + opponent_score) over_margin,
     ABS(over_points - (team_score + opponent_score)) over_margin_abs,
-    ABS( (team_score + team_spread) - opponent_score ) < 4 team_margin_ats_close
+    ABS( (team_score + team_spread) - opponent_score ) < 4 team_margin_ats_3,
+    ABS( (team_score + team_spread) - opponent_score ) < 4 team_margin_ats_4,
+    ABS( (team_score + team_spread) - opponent_score ) < 7 team_margin_ats_7,
+    ABS( (team_score + team_spread) - opponent_score ) < 10 team_margin_ats_10
 FROM (
     -- Convert from home / away to team / opponent
     SELECT
@@ -137,7 +140,10 @@ SELECT
     under_price,
     over_points - (team_score + opponent_score) over_margin,
     ABS(over_points - (team_score + opponent_score)) over_margin_abs,
-    ABS( (team_score + team_spread) - opponent_score ) < 4 team_margin_ats_close
+    ABS( (team_score + team_spread) - opponent_score ) < 4 team_margin_ats_3,
+    ABS( (team_score + team_spread) - opponent_score ) < 4 team_margin_ats_4,
+    ABS( (team_score + team_spread) - opponent_score ) < 7 team_margin_ats_7,
+    ABS( (team_score + team_spread) - opponent_score ) < 10 team_margin_ats_10
 FROM (
     -- Convert from home / away to team / opponent
     SELECT
@@ -236,8 +242,10 @@ SELECT
     under_price,
     over_points - (team_score + opponent_score) over_margin,
     ABS(over_points - (team_score + opponent_score)) over_margin_abs,
-    ABS( (team_score + team_spread) - opponent_score ) < 4 team_margin_ats_close
-
+    ABS( (team_score + team_spread) - opponent_score ) < 4 team_margin_ats_3,
+    ABS( (team_score + team_spread) - opponent_score ) < 4 team_margin_ats_4,
+    ABS( (team_score + team_spread) - opponent_score ) < 7 team_margin_ats_7,
+    ABS( (team_score + team_spread) - opponent_score ) < 10 team_margin_ats_10
 FROM (
     -- Convert from home / away to team / opponent
     SELECT

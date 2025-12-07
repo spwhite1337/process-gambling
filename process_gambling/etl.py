@@ -44,7 +44,11 @@ class Run(Etl):
             'team_win_ats', 
             'team_margin_ats_abs', 
             'over_win', 
-            'over_margin_abs'
+            'over_margin_abs',
+            'team_margin_ats_3',
+            'team_margin_ats_4',
+            'team_margin_ats_7',
+            'team_margin_ats_10',
         ]
         df_tmp = []
         for team_name, df__ in df.groupby('team'):
