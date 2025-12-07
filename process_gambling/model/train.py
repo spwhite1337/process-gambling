@@ -21,12 +21,36 @@ class Train(Wrangle):
         self.ptiles = None
 
     def train(self, df: pd.DataFrame):
-        if self.model_params['model_type'] == 'linear_svc':
-            ppl = Pipeline([
-                ('standardscaler', StandardScaler()),
-                ('mdl', SVC(max_iter=-1, probability=True, kernel='linear', random_state=187)
-                )
-            ])
+        if model_type == 'svc_linear':
+            mdl_ =  ('mdl', SVC(max_iter=-1, probability=True, kernel='linear', random_state=187))
+            hps = {'mdl__C': [0.0001, 0.0003, 0.001, 0.003, 0.01, 0.03, 0.1, 0.3, 1]}
+        elif model_type == 'logreg':
+            mdl_ =  ('mdl', LogisticRegression(
+                penalty='l2', 
+                solver='liblinear', 
+                fit_intercept=True, 
+                random_state=187
+            ))
+            hps = {'mdl__C': [0.01, 0.03, 0.1, 0.3, 1]}
+        elif model_type == 'svc_rbf':
+            mdl_ =  ('mdl', SVC(
+                max_iter=-1, 
+                probability=True, 
+                kernel='rbf',
+                random_state=187
+            ))
+            hps = {'mdl__C': [0.0001, 0.0003, 0.001, 0.003, 0.01, 0.03, 0.1, 0.3, 1]}
+        elif model_type == 'lgbm':
+            mdl_ = ('mdl', LGBMClassifier(random_state=42))
+            hps = {
+                'mdl__max_depth': [-1, 3, 4],
+                'mdl__n_estimators': [100, 1000],
+                'mdl__learning_rate': [0.01, 0.001],
+                'mdl__num_leaves': [3, 5, 10],
+                'mdl__scale_pos_weight': [1, 10, 100],
+            }
+        else:
+            raise NotImplementedError(model_type)
         self.mdl = GridSearchCV(
             ppl,
             verbose=1,

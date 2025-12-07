@@ -14,7 +14,7 @@ class Params(Load):
                         'mdl__C': [0.001, 0.003, 0.01, 0.03, 0.1, 0.3]
                     }
                 },
-                'response_col': 'team_margin_ats_close',
+                'response_col': 'team_margin_ats_3',
                 'val_year': 2024
             }
         }
@@ -23,22 +23,35 @@ class Params(Load):
     FEATURE_SETS = {
         'americanfootball_nfl': {
             'base': [
-                # 'team_spread_abs',
-                # 'over_win_window_3',
-                # 'over_win_window_7',
-                'team_win_ats_window_3', 
-                'team_win_ats_window_7', 
-                'team_margin_ats_abs_window_3',
-                'team_margin_ats_abs_window_7', 
-                'opponent_team_win_ats_window_3', 
-                'opponent_team_win_ats_window_7', 
-                'opponent_team_margin_ats_abs_window_3', 
+                'team_margin_ats_abs_window_7',
                 'opponent_team_margin_ats_abs_window_7',
+                'team_margin_ats_abs_window_7_x_opponent_team_margin_ats_abs_window_7',
+                'over_margin_abs_window_7',
+                'opponent_over_margin_abs_window_7',
+                'over_margin_abs_window_7_x_opponent_over_margin_abs_window_7'
             ]
         }
     }
 
     GROUP_COLS = ['event_id', 'season']
+
+    interactions = [
+        ('team_win_window_3', 'opponent_team_win_window_3'),
+        ('team_win_window_5', 'opponent_team_win_window_5'),
+        ('team_win_window_7', 'opponent_team_win_window_7'),
+        ('team_win_ats_window_3', 'opponent_team_win_ats_window_3'),
+        ('team_win_ats_window_5', 'opponent_team_win_ats_window_5'),
+        ('team_win_ats_window_7', 'opponent_team_win_ats_window_7'),
+        ('team_margin_ats_abs_window_3', 'opponent_team_margin_ats_abs_window_3'),
+        ('team_margin_ats_abs_window_5', 'opponent_team_margin_ats_abs_window_5'),
+        ('team_margin_ats_abs_window_7', 'opponent_team_margin_ats_abs_window_7'),
+        ('team_margin_ats_3_window_3', 'opponent_team_margin_ats_3_window_3'),
+        ('team_margin_ats_3_window_5', 'opponent_team_margin_ats_3_window_5'),
+        ('team_margin_ats_3_window_7', 'opponent_team_margin_ats_3_window_7'),
+        ('over_margin_abs_window_3', 'opponent_over_margin_abs_window_3'),
+        ('over_margin_abs_window_5', 'opponent_over_margin_abs_window_5'),
+        ('over_margin_abs_window_7', 'opponent_over_margin_abs_window_7'),
+    ]
 
     def __init__(self, sport: str = 'americanfootball_nfl', version: str = 'v0'):
         self.sport = sport
