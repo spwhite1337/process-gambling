@@ -3,11 +3,15 @@ import pandas as pd
 from sklearn.preprocessing import StandardScaler
 from sklearn.pipeline import make_pipeline, Pipeline
 
-from sklearn.linear_model import LogisticRegression
 from sklearn.svm import SVC
+from lightgbm import LGBMClassifier
+from sklearn.linear_model import LogisticRegression
+from sklearn.frozen import FrozenEstimator
 
+from process_gambling.utils.utils import WalkForwardCV
 from sklearn.model_selection import GridSearchCV
 from sklearn.model_selection import GroupKFold
+from sklearn.calibration import CalibratedClassifierCV
 
 from process_gambling.model.wrangle import Wrangle
 from process_gambling import MODEL_VERSION
@@ -51,6 +55,11 @@ class Train(Wrangle):
             }
         else:
             raise NotImplementedError(model_type)
+
+        # Cv folds
+        gkf = GroupKFold(n_splits=df['season'].nunique())
+        wfv = WalkForwardCV(n_splits=self.n_splits, n_train=500)
+
         self.mdl = GridSearchCV(
             ppl,
             verbose=1,
