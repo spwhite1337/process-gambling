@@ -59,4 +59,5 @@ class Params(Load):
         self.model_params = self.MODEL_PARAMS[sport][version]
         self.features = self.FEATURE_SETS[sport][self.model_params['feature_set']]
         self.response_col = self.model_params['response_col']
+        self.model_type = self.model_params['model_type']
 

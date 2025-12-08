@@ -25,27 +25,27 @@ class Train(Wrangle):
         self.ptiles = None
 
     def train(self, df: pd.DataFrame):
-        if model_type == 'svc_linear':
-            mdl_ =  ('mdl', SVC(max_iter=-1, probability=True, kernel='linear', random_state=187))
+        if self.model_type == 'svc_linear':
+            mdl =  ('mdl', SVC(max_iter=-1, probability=True, kernel='linear', random_state=187))
             hps = {'mdl__C': [0.0001, 0.0003, 0.001, 0.003, 0.01, 0.03, 0.1, 0.3, 1]}
-        elif model_type == 'logreg':
-            mdl_ =  ('mdl', LogisticRegression(
+        elif self.model_type == 'logreg':
+            mdl =  ('mdl', LogisticRegression(
                 penalty='l2', 
                 solver='liblinear', 
                 fit_intercept=True, 
                 random_state=187
             ))
             hps = {'mdl__C': [0.01, 0.03, 0.1, 0.3, 1]}
-        elif model_type == 'svc_rbf':
-            mdl_ =  ('mdl', SVC(
+        elif self.model_type == 'svc_rbf':
+            mdl =  ('mdl', SVC(
                 max_iter=-1, 
                 probability=True, 
                 kernel='rbf',
                 random_state=187
             ))
             hps = {'mdl__C': [0.0001, 0.0003, 0.001, 0.003, 0.01, 0.03, 0.1, 0.3, 1]}
-        elif model_type == 'lgbm':
-            mdl_ = ('mdl', LGBMClassifier(random_state=42))
+        elif self.model_type == 'lgbm':
+            mdl = ('mdl', LGBMClassifier(random_state=42))
             hps = {
                 'mdl__max_depth': [-1, 3, 4],
                 'mdl__n_estimators': [100, 1000],
@@ -54,23 +54,26 @@ class Train(Wrangle):
                 'mdl__scale_pos_weight': [1, 10, 100],
             }
         else:
-            raise NotImplementedError(model_type)
+            raise NotImplementedError(self.model_type)
+        ppl = Pipeline([('standardscaler', StandardScaler()), mdl])
 
-        # Cv folds
-        gkf = GroupKFold(n_splits=df['season'].nunique())
         wfv = WalkForwardCV(n_splits=self.n_splits, n_train=500)
-
-        self.mdl = GridSearchCV(
+        mdl = GridSearchCV(
             ppl,
             verbose=1,
             scoring='roc_auc',
-            param_grid=self.model_params['hyper_params']['param_grid'],
-            cv=GroupKFold(n_splits=df['season'].nunique()),
+            param_grid=hps,
+            cv=wfv,
             return_train_score=True,
             refit=True,
         )
-        self.mdl.fit(df[self.features], df[self.response_col], groups=df['season'])
+        mdl.fit(df[self.features], df[self.response_col], groups=df['season'])
+        mdl.fit(df_train[features], df_train[response])
+        self.mdl = CalibratedClassifierCV(FrozenEstimator(mdl_base), method='sigmoid')
+        self.mdl.fit(df[features], df[response])
+
         df_cv = pd.DataFrame(self.mdl.cv_results_)
         df_cv['params'] = df_cv['params'].astype(str)
         self.upload(df_cv, f'GOLD_CV_RESULTS_MODEL_{MODEL_VERSION}')
         self.ptiles = None
+
