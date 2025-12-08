@@ -25,9 +25,11 @@ class Train(Wrangle):
         self.ptiles = None
 
     def train(self, df: pd.DataFrame):
+        hps = self.model_params.get('hyper_params'):
         if self.model_type == 'svc_linear':
             mdl =  ('mdl', SVC(max_iter=-1, probability=True, kernel='linear', random_state=187))
-            hps = {'mdl__C': [0.0001, 0.0003, 0.001, 0.003, 0.01, 0.03, 0.1, 0.3, 1]}
+            if hps is not None:
+                hps = {'mdl__C': [0.0001, 0.0003, 0.001, 0.003, 0.01, 0.03, 0.1, 0.3, 1]}
         elif self.model_type == 'logreg':
             mdl =  ('mdl', LogisticRegression(
                 penalty='l2', 
@@ -35,7 +37,8 @@ class Train(Wrangle):
                 fit_intercept=True, 
                 random_state=187
             ))
-            hps = {'mdl__C': [0.01, 0.03, 0.1, 0.3, 1]}
+            if hps is not None:
+                hps = {'mdl__C': [0.01, 0.03, 0.1, 0.3, 1]}
         elif self.model_type == 'svc_rbf':
             mdl =  ('mdl', SVC(
                 max_iter=-1, 
@@ -43,16 +46,18 @@ class Train(Wrangle):
                 kernel='rbf',
                 random_state=187
             ))
-            hps = {'mdl__C': [0.0001, 0.0003, 0.001, 0.003, 0.01, 0.03, 0.1, 0.3, 1]}
+            if hps is not None:
+                hps = {'mdl__C': [0.0001, 0.0003, 0.001, 0.003, 0.01, 0.03, 0.1, 0.3, 1]}
         elif self.model_type == 'lgbm':
             mdl = ('mdl', LGBMClassifier(random_state=42))
-            hps = {
-                'mdl__max_depth': [-1, 3, 4],
-                'mdl__n_estimators': [100, 1000],
-                'mdl__learning_rate': [0.01, 0.001],
-                'mdl__num_leaves': [3, 5, 10],
-                'mdl__scale_pos_weight': [1, 10, 100],
-            }
+            if hps is not None:
+                hps = {
+                    'mdl__max_depth': [-1, 3, 4],
+                    'mdl__n_estimators': [100, 1000],
+                    'mdl__learning_rate': [0.01, 0.001],
+                    'mdl__num_leaves': [3, 5, 10],
+                    'mdl__scale_pos_weight': [1, 10, 100],
+                }
         else:
             raise NotImplementedError(self.model_type)
         ppl = Pipeline([('standardscaler', StandardScaler()), mdl])
