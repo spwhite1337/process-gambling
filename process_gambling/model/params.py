@@ -8,14 +8,16 @@ class Params(Load):
         'americanfootball_nfl': {
             'v0': {
                 'feature_set': 'base',
-                'model_type': 'linear_svc',
+                'response_col': 'team_margin_ats_3',
+                'model_type': 'logreg',
                 'hyper_params': {
                     'param_grid': {
-                        'mdl__C': [0.001, 0.003, 0.01, 0.03, 0.1, 0.3]
+                        'mdl__C': [0.01, 0.03, 0.1, 0.3, 1.]
                     }
                 },
-                'response_col': 'team_margin_ats_3',
-                'val_year': 2024
+                'n_splits': 5,
+                'n_train': 500,
+                'n_test': 100
             }
         }
     }
@@ -33,7 +35,7 @@ class Params(Load):
         }
     }
 
-    GROUP_COLS = ['event_id', 'season']
+    GROUP_COLS = ['event_id', 'event_start', 'season']
 
     interactions = [
         ('team_win_window_3', 'opponent_team_win_window_3'),
@@ -60,4 +62,7 @@ class Params(Load):
         self.features = self.FEATURE_SETS[sport][self.model_params['feature_set']]
         self.response_col = self.model_params['response_col']
         self.model_type = self.model_params['model_type']
+        self.n_splits = self.model_params['n_splits']
+        self.n_train = self.model_params['n_train']
+        self.n_test = self.model_params['n_test']
 

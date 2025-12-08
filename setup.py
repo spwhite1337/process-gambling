@@ -12,6 +12,7 @@ setup(
         'lxml',
         'numpy',
         'scikit-learn',
+        'lightgbm',
         'requests',
         'plotly',
         'tqdm',

@@ -21,8 +21,10 @@ class Wrangle(Etl):
         # Maybe drop 2020 and prior due to different game? Maybe time filter?
         # df = df[df['season'] > 2020]
         df = self._transform(df)
-        df_train = df[df['season'] < self.model_params['val_year']].copy()
-        df_test = df[df['season'] == self.model_params['val_year']].copy()
+        df = df.sort_values(['event_start', 'event_id'], ascending=True).reset_index(drop=True)
+
+        df_train = df[~df['event_id'].isin([df['event_id'].tail(self.n_test)]].copy()
+        df_test = df[df['event_id'].isin([df['event_id'].tail(self.n_test)]].copy()
         return df_train, df_test
 
     def transform(self, df: pd.DataFrame) -> pd.DataFrame:

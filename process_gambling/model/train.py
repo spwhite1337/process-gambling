@@ -25,7 +25,7 @@ class Train(Wrangle):
         self.ptiles = None
 
     def train(self, df: pd.DataFrame):
-        hps = self.model_params.get('hyper_params'):
+        hps = self.model_params.get('hyper_params')
         if self.model_type == 'svc_linear':
             mdl =  ('mdl', SVC(max_iter=-1, probability=True, kernel='linear', random_state=187))
             if hps is not None:
@@ -62,7 +62,7 @@ class Train(Wrangle):
             raise NotImplementedError(self.model_type)
         ppl = Pipeline([('standardscaler', StandardScaler()), mdl])
 
-        wfv = WalkForwardCV(n_splits=self.n_splits, n_train=500)
+        wfv = WalkForwardCV(n_splits=self.n_splits, n_train=self.n_train)
         mdl = GridSearchCV(
             ppl,
             verbose=1,
