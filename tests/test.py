@@ -21,7 +21,9 @@ class Tests(unittest.TestCase):
     def test_update_preds(self):
         print('Testing Preds from Loaded Model and Update Data')
         from process_gambling.model import Model
-        mdl = Model(sport='americanfootball_nfl', version='v0').load_model()
+        mdl = Model(sport='americanfootball_nfl', version='v0')
+        # mdl.download_model()
+        mdl = mdl.load_model()
         df = mdl.download_update()
         mdl.validate(df, 'GOLD_UPDATE_PREDS_v0')
 

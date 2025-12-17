@@ -11,6 +11,7 @@ class Validate(Train):
     def validate(self, df: pd.DataFrame, table_name: Optional[str] = None):
         if self.mdl is None:
             raise FileNotFoundError('Model not trained yet')
+        df = self._transform(df)
         val_preds = self.mdl.predict_proba(df[self.features])[:, 1]
         val_trues = df[self.response_col]
         df_val = pd.DataFrame({

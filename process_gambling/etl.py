@@ -107,6 +107,7 @@ class Run(Etl):
             if not self.download_data_from_s3():
                 self._run()
         elif self.pull_type == 'update':
+            print('here')
             self._run()
         else:
             raise NotImplementedError()

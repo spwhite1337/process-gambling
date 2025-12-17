@@ -10,7 +10,9 @@ class Wrangle(Etl):
     def _transform(self, df: pd.DataFrame) -> pd.DataFrame:
         # Interaction terms
         for t in self.interactions:
-            df[t[0] + '_x_' + t[1]] = df[t[0]] * df[t[1]]
+            x_col = t[0] + '_x_' + t[1]
+            if x_col in self.features:
+                df[x_col] = df[t[0]] * df[t[1]]
 
         df = df[self.GROUP_COLS + self.features + [self.response_col]]
         # Drop na
