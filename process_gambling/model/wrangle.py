@@ -23,8 +23,8 @@ class Wrangle(Etl):
         df = self._transform(df)
         df = df.sort_values(['event_start', 'event_id'], ascending=True).reset_index(drop=True)
 
-        df_train = df[~df['event_id'].isin([df['event_id'].tail(self.n_test)]].copy()
-        df_test = df[df['event_id'].isin([df['event_id'].tail(self.n_test)]].copy()
+        df_train = df[~df['event_id'].isin(df['event_id'].tail(self.n_test))].copy()
+        df_test = df[df['event_id'].isin(df['event_id'].tail(self.n_test))].copy()
         return df_train, df_test
 
     def transform(self, df: pd.DataFrame) -> pd.DataFrame:
