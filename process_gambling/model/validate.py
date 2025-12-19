@@ -17,24 +17,26 @@ class Validate(Train):
         print(df.transpose())
 
     def validate(self, df: pd.DataFrame, table_name: Optional[str] = None):
+
         if self.mdl is None:
             raise FileNotFoundError('Model not trained yet')
+
+        # CV results
+        self.show_cv()
+
+        # Get preds
         df = self._transform(df)
         val_preds = self.mdl.predict_proba(df[self.features])[:, 1]
         val_trues = df[self.response_col]
-        auc = roc_auc_score(val_trues, val_preds)
-        print(f'AUC: {round(auc, 3)}')
-
-        # Gather
         df_val = pd.DataFrame({
             'trues': val_trues,
             'preds': val_preds
         })
 
-        # CV results
-        self.show_cv()
+        auc = roc_auc_score(val_trues, val_preds)
+        print(f'AUC: {round(auc, 3)}')
 
-        # Define perecentiles based on val-set
+        # Define perecentiles based on val-set and later prediction categories
         if self.ptiles is None:
             self.ptiles = np.percentile(df_val['preds'].values, np.arange(0, 100, 11))
 
