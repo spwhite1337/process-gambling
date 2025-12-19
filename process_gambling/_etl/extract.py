@@ -65,6 +65,18 @@ class Extract(ExtractionHelpersSportsRef, ExtractionHelpersOddsApi):
 
                 df = self._download_historical_sports_ref(start_year, end_year)
                 df = self._parse_sports_ref(df)
+                
+                # De-dupe
+                ## Since we pull by year, need to drop earlier ones in the season
+                if self.pull_type == 'update':
+                    conn = self.connect_to_db()
+                    max_event_start = pd.read_sql(f"""
+                    SELECT MAX(kickoff_datetime) max_event_start
+                    FROM BRONZE_SCORES_{self.scores_data_source}_{self.sport}
+                    """)['max_event_start'].max()
+                    self.close_db(conn)
+                    df = df[df['kickoff_datetime'] > max_event_start].copy()
+                    
             else:
                 raise NotImplementedError(self.scores_data_source)
 
