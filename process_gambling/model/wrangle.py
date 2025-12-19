@@ -8,6 +8,8 @@ from process_gambling.model.etl import Etl
 class Wrangle(Etl):
 
     def _transform(self, df: pd.DataFrame) -> pd.DataFrame:
+        # Avoid setting-with-copy warning
+        df = df.copy()
         # Interaction terms
         for t in self.interactions:
             x_col = t[0] + '_x_' + t[1]
