@@ -12,12 +12,12 @@ class Params(Load):
                 'model_type': 'logreg',
                 'hyper_params': {
                     'param_grid': {
-                        'mdl__C': [0.01, 0.03, 0.1, 0.3, 1.]
+                        'mdl__C': [0.003, 0.01, 0.03, 0.1, 0.3, 1.]
                     }
                 },
-                'n_splits': 5,
-                'n_train': 500,
-                'n_test': 100
+                'n_splits': 4, # ~approximate number of seasons in training set
+                'n_train': 500, # ~272 games per season after 2020 for NFL
+                'n_test': 100,  # ~272 games per seasons after 2020 for NFL
             }
         }
     }

@@ -3,10 +3,18 @@ import pandas as pd
 import numpy as np
 from scipy.stats import binomtest
 
+from sklearn.metrics import roc_auc_score, roc_curve
+
 from process_gambling.model.train import Train
 
 
 class Validate(Train):
+
+    def show_cv(self):
+        conn = self.connect_to_db()
+        df = pd.read_sql(f'SELECT * FROM GOLD_CV_RESULTS_MODEL_{self.model_version}', conn)
+        df = df[df['rank_test_score'] == 1]
+        print(df.transpose())
 
     def validate(self, df: pd.DataFrame, table_name: Optional[str] = None):
         if self.mdl is None:
@@ -14,10 +22,17 @@ class Validate(Train):
         df = self._transform(df)
         val_preds = self.mdl.predict_proba(df[self.features])[:, 1]
         val_trues = df[self.response_col]
+        auc = roc_auc_score(val_trues, val_preds)
+        print(f'AUC: {round(auc, 3)}')
+
+        # Gather
         df_val = pd.DataFrame({
             'trues': val_trues,
             'preds': val_preds
         })
+
+        # CV results
+        self.show_cv()
 
         # Define perecentiles based on val-set
         if self.ptiles is None:

@@ -21,7 +21,7 @@ class Wrangle(Etl):
 
     def fit_transform(self, df: pd.DataFrame) -> Tuple[pd.DataFrame, pd.DataFrame]:
         # Maybe drop 2020 and prior due to different game? Maybe time filter?
-        # df = df[df['season'] > 2020]
+        df = df[df['season'] > 2020]
         df = self._transform(df)
         df = df.sort_values(['event_start', 'event_id'], ascending=True).reset_index(drop=True)
 
