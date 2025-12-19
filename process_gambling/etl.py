@@ -34,11 +34,26 @@ class Run(Etl):
         self.transform_odds()
 
     def append_updates(self):
-        tables_to_append = []
+        conn = self.connect_to_db()
+        cursor = conn.cursor()
+        tables_to_append = [
+            'BRONZE_SCORES_{self.scores_data_source}_{self.sport}',
+            'BRONZE_ODDSAPI_EVENTS_{self.sport}',
+            'BRONZE_ODDSAPI_HIST_ODDS_{self.sport}',
+            'SILVER_EVENT_ODDS_{self.sport}',
+            'SILVER_EVENT_SCORES_{self.sport}',
+            'SILVER_EVENTS_LOOKUP_{self.sport}'
+        ]
         for table_to_append in tables_to_append:
-            conn = self.connect_to_db()
             # Run append command
+            cursor.execute(f"""
+                INSERT INTO {table_to_append} 
+                SELECT *
+                FROM {table_to_append}_UPDATE;
+            """)
             # Drop update table
+            cursor.execute(f'DROP TABLE {table_to_append}_UPDATE;')
+        self.close_db(conn)
         return
 
     def curate(self):
