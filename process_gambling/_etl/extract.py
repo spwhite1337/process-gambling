@@ -55,15 +55,18 @@ class Extract(ExtractionHelpersSportsRef, ExtractionHelpersOddsApi):
     def extract_scores(self) -> pd.DataFrame:
         if self.sport in ['americanfootball_nfl']:
 
-            if self.pull_type == 'initial':
-                start_year, end_year = self.START_YEAR[self.sport], datetime.datetime.now().year
-            elif self.pull_type == 'update':
-                start_year, end_year = datetime.datetime.now().year, datetime.datetime.now().year + 1
-            elif self.pull_type == 'live':
-                raise NotImplementedError()
+            if self.scores_data_source == 'SPORTSREF':
+                if self.pull_type == 'initial':
+                    start_year, end_year = self.START_YEAR[self.sport], datetime.datetime.now().year
+                elif self.pull_type == 'update':
+                    start_year, end_year = datetime.datetime.now().year, datetime.datetime.now().year + 1
+                elif self.pull_type == 'live':
+                    raise NotImplementedError(self.pull_type)
 
-            df = self._download_historical_sports_ref(start_year, end_year)
-            df = self._parse_sports_ref(df)
+                df = self._download_historical_sports_ref(start_year, end_year)
+                df = self._parse_sports_ref(df)
+            else:
+                raise NotImplementedError(self.scores_data_source)
 
         else:
             df = pd.DataFrame()
