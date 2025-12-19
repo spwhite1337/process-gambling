@@ -33,7 +33,16 @@ class Run(Etl):
         self.transform_scores()
         self.transform_odds()
 
+    def append_updates(self):
+        tables_to_append = []
+        for table_to_append in tables_to_append:
+            conn = self.connect_to_db()
+            # Run append command
+            # Drop update table
+        return
+
     def curate(self):
+        # TODO: Remove table_appendix
         query = queries[self.sport]['curate'][self.pull_type]
         df = run_query(query)
         self.upload(df, f'GOLD_CURATE_TEAM_EVENTS{self.table_appendix}_{DATA_VERSION}')
@@ -95,6 +104,10 @@ class Run(Etl):
         self.upload(df, f'BRONZE_ODDSAPI_HIST_ODDS_{self.sport}{self.table_appendix}')
 
         self.transform()
+        
+        # Before curate, append UPDATE tables
+        if self.pull_type == 'update':
+            self.append_updates()
 
         self.curate()
 
