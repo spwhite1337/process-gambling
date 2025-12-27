@@ -72,6 +72,7 @@ class Train(Wrangle):
             return_train_score=True,
             refit=True,
         )
+        
         mdl.fit(df[self.features], df[self.response_col])
         self.mdl = CalibratedClassifierCV(FrozenEstimator(mdl), method='sigmoid')
         self.mdl.fit(df[self.features], df[self.response_col])
