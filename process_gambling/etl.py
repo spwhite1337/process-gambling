@@ -57,10 +57,9 @@ class Run(Etl):
         return
 
     def curate(self):
-        # TODO: Remove table_appendix
         query = queries[self.sport]['curate'][self.pull_type]
         df = run_query(query)
-        self.upload(df, f'GOLD_CURATE_TEAM_EVENTS{self.table_appendix}_{DATA_VERSION}')
+        self.upload(df, f'GOLD_CURATE_TEAM_EVENTS_{DATA_VERSION}')
         
         # Rolling windows and aggregate to EVENTS
         n_gamess, metrics = [3, 5, 7], [
@@ -93,7 +92,7 @@ class Run(Etl):
                 df_opp = df_opp.rename(columns={col: 'opponent_' + col})
                 subset_cols.append('opponent_' + col)
         df = df.merge(df_opp[['event_id', 'opponent'] + subset_cols], on=['event_id', 'opponent'])
-        self.upload(df, f'GOLD_CURATE_EVENTS{self.table_appendix}_{DATA_VERSION}')
+        self.upload(df, f'GOLD_CURATE_EVENTS_{DATA_VERSION}')
         return df
     
     def _run(self):
@@ -135,7 +134,6 @@ class Run(Etl):
             if not self.download_data_from_s3():
                 self._run()
         elif self.pull_type == 'update':
-            print('here')
             self._run()
         else:
             raise NotImplementedError()
