@@ -132,9 +132,6 @@ class Run(Etl):
 
 
     def run(self):
-        # self.curate()
-        # if True:
-        #     return
         if self.pull_type == 'initial':
             if not self.download_data_from_s3():
                 self._run()
