@@ -37,12 +37,12 @@ class Run(Etl):
         conn = self.connect_to_db()
         cursor = conn.cursor()
         tables_to_append = [
-            'BRONZE_SCORES_{self.scores_data_source}_{self.sport}',
-            'BRONZE_ODDSAPI_EVENTS_{self.sport}',
-            'BRONZE_ODDSAPI_HIST_ODDS_{self.sport}',
-            'SILVER_EVENT_ODDS_{self.sport}',
-            'SILVER_EVENT_SCORES_{self.sport}',
-            'SILVER_EVENTS_LOOKUP_{self.sport}'
+            f'BRONZE_SCORES_{self.scores_data_source}_{self.sport}',
+            f'BRONZE_ODDSAPI_EVENTS_{self.sport}',
+            f'BRONZE_ODDSAPI_HIST_ODDS_{self.sport}',
+            f'SILVER_EVENT_ODDS_{self.sport}',
+            f'SILVER_EVENT_SCORES_{self.sport}',
+            f'SILVER_EVENTS_LOOKUP_{self.sport}'
         ]
         for table_to_append in tables_to_append:
             # Run append command
