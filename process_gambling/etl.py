@@ -107,14 +107,19 @@ class Run(Etl):
             self.upload(df, f'SILVER_TEAM_LOOKUPS_{self.sport}')
 
         df = self.extract_scores()
+        print(f'Downloaded {df.shape[0]} Rows for Scores')
         self.upload(df, f'BRONZE_SCORES_{self.scores_data_source}_{self.sport}{self.table_appendix}')
 
         event_starts = self.download_event_starts()
+        print(f'Downloaded {len(event_starts)} Event Starts')
         df = self.extract_events(event_starts)
+        print(f'Downloaded {df.shape[0]} Rows for Events')
         self.upload(df, f'BRONZE_ODDSAPI_EVENTS_{self.sport}{self.table_appendix}')
 
         df_events = self.download(f'BRONZE_ODDSAPI_EVENTS_{self.sport}{self.table_appendix}')
+        print(f'Downloaded {df_events.shape[0]} Rows for ODDS-Events')
         df = self.extract_odds(df_events)
+        print(f'Downloaded {df.shape[0]} Rows for ODDS')
         self.upload(df, f'BRONZE_ODDSAPI_HIST_ODDS_{self.sport}{self.table_appendix}')
 
         self.transform()
@@ -127,9 +132,9 @@ class Run(Etl):
 
 
     def run(self):
-        self.curate()
-        if True:
-            return
+        # self.curate()
+        # if True:
+        #     return
         if self.pull_type == 'initial':
             if not self.download_data_from_s3():
                 self._run()

@@ -73,7 +73,7 @@ class Extract(ExtractionHelpersSportsRef, ExtractionHelpersOddsApi):
                     max_event_start = pd.read_sql(f"""
                     SELECT MAX(kickoff_datetime) max_event_start
                     FROM BRONZE_SCORES_{self.scores_data_source}_{self.sport}
-                    """)['max_event_start'].max()
+                    """, conn)['max_event_start'].max()
                     self.close_db(conn)
                     df = df[df['kickoff_datetime'] > max_event_start].copy()
                     
