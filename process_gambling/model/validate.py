@@ -41,6 +41,7 @@ class Validate(Train):
             self.ptiles = np.percentile(df_val['preds'].values, np.arange(0, 100, 11))
 
         null_hyp = df_val['trues'].mean()
+        print(f'null_hyp: {round(null_hyp, 3)}')
         for th in self.ptiles:
             wins = (df_val[df_val['preds'] >= th]['trues']).sum()
             losses = (1-df_val[df_val['preds'] >= th]['trues']).sum()
