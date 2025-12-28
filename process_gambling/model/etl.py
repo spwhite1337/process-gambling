@@ -17,18 +17,8 @@ class Etl(Params):
         df = run_query(query)
         return df
 
-    def _extract_update(self) -> pd.DataFrame: 
-        query = f'SELECT * FROM GOLD_CURATE_EVENTS_UPDATE_{DATA_VERSION}'
-        df = run_query(query)
-        return df
-
     def download_train(self) -> pd.DataFrame:
         df = self._extract()
-        return df
-
-    def download_update(self) -> pd.DataFrame:
-        df = self._extract_update()
-        df = df[df['season'] == df['season'].max()]
         return df
 
     def save_model(self):
