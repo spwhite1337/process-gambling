@@ -52,7 +52,7 @@ class Run(Etl):
                 FROM {table_to_append}_UPDATE;
             """)
             # Drop update table
-            cursor.execute(f'DROP TABLE {table_to_append}_UPDATE;')
+            # cursor.execute(f'DROP TABLE {table_to_append}_UPDATE;')
         self.close_db(conn)
         return
 
