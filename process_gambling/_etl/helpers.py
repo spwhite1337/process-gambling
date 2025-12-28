@@ -78,6 +78,10 @@ class ExtractionHelpersSportsRef(Params):
 
             df['kickoff_datetime'] = df['kickoff_datetime'].apply(parse_datetime)
             df['kickoff_timezone'] = 'UTC'
+
+            # Drop scheduled games that haven't occured yet
+            df = df[pd.to_datetime(df['kickoff_datetime']) < pd.Timestamp.now()]
+
             return df
 
     def _download_historical_sports_ref(self, start_year: int, end_year: int) -> pd.DataFrame:
