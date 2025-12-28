@@ -126,8 +126,7 @@ class Run(Etl):
         
         # Before curate, append UPDATE tables
         if self.pull_type == 'update':
-            pass
-            # self.append_updates()
+            self.append_updates()
 
         self.curate()
 
