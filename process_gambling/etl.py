@@ -57,7 +57,7 @@ class Run(Etl):
         return
 
     def curate(self):
-        query = queries[self.sport]['curate'][self.pull_type]
+        query = queries[self.sport]['curate']
         df = run_query(query)
         self.upload(df, f'GOLD_CURATE_TEAM_EVENTS_{DATA_VERSION}')
         
@@ -126,7 +126,8 @@ class Run(Etl):
         
         # Before curate, append UPDATE tables
         if self.pull_type == 'update':
-            self.append_updates()
+            pass
+            # self.append_updates()
 
         self.curate()
 
