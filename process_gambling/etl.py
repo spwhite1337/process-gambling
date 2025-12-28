@@ -122,12 +122,14 @@ class Run(Etl):
         print(f'Downloaded {df.shape[0]} Rows for ODDS')
         self.upload(df, f'BRONZE_ODDSAPI_HIST_ODDS_{self.sport}{self.table_appendix}')
 
+        # Run transform steps for SILVER layers
         self.transform()
         
         # Before curate, append UPDATE tables
         if self.pull_type == 'update':
             self.append_updates()
 
+        # Run curate for GOLD layers
         self.curate()
 
 
