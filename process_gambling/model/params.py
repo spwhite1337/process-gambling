@@ -15,9 +15,9 @@ class Params(Load):
                         'mdl__C': [0.003, 0.01, 0.03, 0.1, 0.3, 1.]
                     }
                 },
-                'n_splits': 4, # ~approximate number of seasons in training set
-                'n_train': 500, # ~272 games per season after 2020 for NFL
-                'n_test': 100,  # ~272 games per seasons after 2020 for NFL
+                'n_splits': 4, # n-test * n_splits + n_train number of games in dataset
+                'n_train': 272*2, # ~272 games per season after 2020 for NFL
+                'n_test': int(272*0.5),  # ~272 games per seasons after 2020 for NFL
             }
         }
     }
