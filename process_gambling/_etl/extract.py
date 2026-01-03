@@ -165,7 +165,7 @@ class Extract(ExtractionHelpersSportsRef, ExtractionHelpersOddsApi):
                 )
                 if res.json().get('error_code'):
                     output = [{'error': res.json().get('error_code')}]
-                if res.json().get('message', '') = 'Service Unavailable':
+                if res.json().get('message', '') == 'Service Unavailable':
                     output = [{'error': 'Service Unavailable'}]
                 else:
                     output = self._parse_odds_output(res)
