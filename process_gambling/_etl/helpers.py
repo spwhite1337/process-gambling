@@ -91,7 +91,12 @@ class ExtractionHelpersSportsRef(Params):
         for team in tqdm(teams):
             for year in range(start_year, end_year):
                 url = self.SPORTS_REF_API[self.sport]
-                df_ = pd.read_html(f'{url}/teams/{team}/{year}.htm')
+                try:
+                    df_ = pd.read_html(f'{url}/teams/{team}/{year}.htm')
+                except Exception as err:
+                    print(f'{url}/teams/{team}/{year}.htm')
+                    print(err)
+
                 df.append(df_[1].assign(year=year, team=team))
                 # To avoid 429 errors, wait between pulls
                 # https://www.sports-reference.com/bot-traffic.html
@@ -118,6 +123,13 @@ class ExtractionHelpersOddsApi(object):
 
     @staticmethod
     def _parse_odds_output(r: Dict[str, Union[str, List]]) -> List[Dict[str, str]]:
+        if any([
+            'timestamp' not in r.json().keys(),
+            'previous_timestamp' not in r.json().keys(),
+            'next_timestamp' not in r.json().keys()
+        ]):
+            print(r.json())
+            return
         records = []
         # Parse top-level attributes
         timestamp = r.json()['timestamp']

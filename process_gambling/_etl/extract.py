@@ -60,6 +60,11 @@ class Extract(ExtractionHelpersSportsRef, ExtractionHelpersOddsApi):
                     start_year, end_year = self.START_YEAR[self.sport], datetime.datetime.now().year
                 elif self.pull_type == 'update':
                     start_year, end_year = datetime.datetime.now().year, datetime.datetime.now().year + 1
+                    # If it isn't yet september, use the past year
+                    if datetime.datetime.now().month < 9:
+                        start_year -= 1
+                        end_year -= 1
+
                 elif self.pull_type == 'live':
                     raise NotImplementedError(self.pull_type)
 

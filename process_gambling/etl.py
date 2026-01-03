@@ -47,9 +47,11 @@ class Run(Etl):
         for table_to_append in tables_to_append:
             # Run append command
             cursor.execute(f"""
-                INSERT INTO {table_to_append} 
-                SELECT *
-                FROM {table_to_append}_UPDATE;
+            CREATE TABLE {table_to_append}_test AS (
+                SELECT * FROM {table_to_append}
+                UNION ALL
+                SELECT * FROM {table_to_append}_UPDATE
+            );
             """)
             # Drop update table
             # cursor.execute(f'DROP TABLE {table_to_append}_UPDATE;')
