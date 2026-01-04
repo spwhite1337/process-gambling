@@ -25,6 +25,10 @@ class Params(Load):
     FEATURE_SETS = {
         'americanfootball_nfl': {
             'base': [
+                'team_margin_ats_abs_window_3',
+                'opponent_team_margin_ats_abs_window_3',
+                'team_margin_ats_abs_window_3_x_opponent_team_margin_ats_abs_window_3',
+
                 'team_margin_ats_abs_window_7',
                 'opponent_team_margin_ats_abs_window_7',
                 'team_margin_ats_abs_window_7_x_opponent_team_margin_ats_abs_window_7',
