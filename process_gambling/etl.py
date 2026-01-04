@@ -46,16 +46,15 @@ class Run(Etl):
         ]
         for table_to_append in tables_to_append:
             # Run append command
-            cursor.execute(f"""DROP TABLE IF EXISTS {table_to_append};""")
             cursor.execute(f"""
-            CREATE TABLE {table_to_append} AS 
-                SELECT * FROM {table_to_append}
-                UNION ALL
+            INSERT INTO {table_to_append}
                 SELECT * FROM {table_to_append}_UPDATE
             ;
             """)
+            conn.commit()
             # Drop update table
             cursor.execute(f'DROP TABLE IF EXISTS {table_to_append}_UPDATE;')
+            conn.commit()
         self.close_db(conn)
         return
 

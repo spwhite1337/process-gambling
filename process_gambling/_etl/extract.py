@@ -165,10 +165,15 @@ class Extract(ExtractionHelpersSportsRef, ExtractionHelpersOddsApi):
                 )
                 if res.json().get('error_code'):
                     output = [{'error': res.json().get('error_code')}]
-                if res.json().get('message', '') == 'Service Unavailable':
+                elif res.json().get('message', '') == 'Service Unavailable':
                     output = [{'error': 'Service Unavailable'}]
                 else:
                     output = self._parse_odds_output(res)
+                if output is None:
+                    print(r.json())
+                    print('')
+                    print(endpoint)
+                    output = []
                 df_ = pd.DataFrame.from_records(output).\
                     assign(days_back=day_back, event_id=event_id, commence_time_0=commence_time_0)
                 time.sleep(0.1)
