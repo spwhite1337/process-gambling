@@ -108,25 +108,24 @@ class Run(Etl):
             df = self.generate_participants_lookup()
             self.upload(df, f'SILVER_TEAM_LOOKUPS_{self.sport}')
         
-        if False:
-            df = self.extract_scores()
-            print(f'Downloaded {df.shape[0]} Rows for Scores')
-            self.upload(df, f'BRONZE_SCORES_{self.scores_data_source}_{self.sport}{self.table_appendix}')
+        df = self.extract_scores()
+        print(f'Downloaded {df.shape[0]} Rows for Scores')
+        self.upload(df, f'BRONZE_SCORES_{self.scores_data_source}_{self.sport}{self.table_appendix}')
 
-            event_starts = self.download_event_starts()
-            print(f'Downloaded {len(event_starts)} Event Starts')
-            df = self.extract_events(event_starts)
-            print(f'Downloaded {df.shape[0]} Rows for Events')
-            self.upload(df, f'BRONZE_ODDSAPI_EVENTS_{self.sport}{self.table_appendix}')
+        event_starts = self.download_event_starts()
+        print(f'Downloaded {len(event_starts)} Event Starts')
+        df = self.extract_events(event_starts)
+        print(f'Downloaded {df.shape[0]} Rows for Events')
+        self.upload(df, f'BRONZE_ODDSAPI_EVENTS_{self.sport}{self.table_appendix}')
 
-            df_events = self.download(f'BRONZE_ODDSAPI_EVENTS_{self.sport}{self.table_appendix}')
-            print(f'Downloaded {df_events.shape[0]} Rows for ODDS-Events')
-            df = self.extract_odds(df_events)
-            print(f'Downloaded {df.shape[0]} Rows for ODDS')
-            self.upload(df, f'BRONZE_ODDSAPI_HIST_ODDS_{self.sport}{self.table_appendix}')
+        df_events = self.download(f'BRONZE_ODDSAPI_EVENTS_{self.sport}{self.table_appendix}')
+        print(f'Downloaded {df_events.shape[0]} Rows for ODDS-Events')
+        df = self.extract_odds(df_events)
+        print(f'Downloaded {df.shape[0]} Rows for ODDS')
+        self.upload(df, f'BRONZE_ODDSAPI_HIST_ODDS_{self.sport}{self.table_appendix}')
 
-            # Run transform steps for SILVER layers
-            self.transform()
+        # Run transform steps for SILVER layers
+        self.transform()
         
         # Before curate, append UPDATE tables
         if self.pull_type == 'update':
