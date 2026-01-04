@@ -29,9 +29,9 @@ class Params(Load):
                 'opponent_team_margin_ats_abs_window_7',
                 'team_margin_ats_abs_window_7_x_opponent_team_margin_ats_abs_window_7',
 
-                'team_margin_ats_3_window_7',
-                'opponent_team_margin_ats_3_window_7',
-                'team_margin_ats_3_window_7_x_opponent_team_margin_ats_3_window_7',
+                # 'team_margin_ats_3_window_7',
+                # 'opponent_team_margin_ats_3_window_7',
+                # 'team_margin_ats_3_window_7_x_opponent_team_margin_ats_3_window_7',
                 # 'over_margin_abs_window_7',
                 # 'opponent_over_margin_abs_window_7',
                 # 'over_margin_abs_window_7_x_opponent_over_margin_abs_window_7'

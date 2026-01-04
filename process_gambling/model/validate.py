@@ -46,13 +46,13 @@ class Validate(Train):
             wins = (df_val[df_val['preds'] >= th]['trues']).sum()
             losses = (1-df_val[df_val['preds'] >= th]['trues']).sum()
             if wins+losses > 0:
-                pvalue = binomtest(wins, wins+losses, null_hyp).pvalue
+                pvalue = binomtest(wins, wins+losses, null_hyp, 'greater').pvalue
                 print(f'U: th: {round(th, 3)}, {wins}, {losses}, {round(wins/(wins+losses), 3)}, pvalue: {round(pvalue, 3)}')
 
             wins = (1-df_val[df_val['preds'] <= th]['trues']).sum()
             losses = (df_val[df_val['preds'] <= th]['trues']).sum()
             if wins+losses > 0:
-                pvalue = binomtest(wins, wins+losses, 1-null_hyp).pvalue
+                pvalue = binomtest(wins, wins+losses, 1-null_hyp, 'less').pvalue
                 print(f'L: th: {round(th, 3)}, {wins}, {losses}, {round(wins/(wins+losses), 3)}, pvalue: {round(pvalue, 3)}')
             print('')
                 
